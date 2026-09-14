@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aside 사용법 완전 가이드</title>
+<meta name="description" content="AI 브라우저 Aside의 설치·권한·지시문·루틴·비밀번호 보관함·요금·활용 사례를 공식 도움말 문서 기준으로 정리한 가이드" />
+<meta property="og:title" content="Aside 사용법 완전 가이드" />
+<meta property="og:description" content="AI 브라우저 Aside의 설치·권한·지시문·루틴·비밀번호 보관함·요금·활용 사례를 공식 도움말 문서 기준으로 정리한 가이드" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://kimju1416.github.io/aside-guide/" />
+<meta property="og:locale" content="ko_KR" />
+<link rel="canonical" href="https://kimju1416.github.io/aside-guide/" />
+<!-- Pretendard 웹폰트: 이 줄이 있어야 의도한 글씨체로 보입니다. 절대 지우지 마세요. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* ===== 디자인 토큰 (색·둥근모서리·그림자) — 보통 그대로 둡니다 =====
+     다른 테마를 원하면 --clay 계열 3개만 바꾸세요. 예) 파랑 테마:
+       --clay:#3B7DD8; --clay-dark:#2C5FA8; --clay-soft:#E5EEFB;            */
+  :root{
+    --clay:#D97757; --clay-dark:#C45D3A; --clay-soft:#F6E9E2;
+    --ink:#2B2622; --ink-soft:#5C544D; --line:#E8E1DA;
+    --bg:#FAF7F4; --card:#FFFFFF; --good:#3F8F6B; --good-soft:#E6F2EC;
+    --code-bg:#2B2622; --code-ink:#F3EDE7; --warn:#B8742A; --warn-soft:#FBEFDD;
+    --blue:#2F6FB0; --blue-soft:#E7F0F8;
+    --radius:18px; --shadow:0 1px 2px rgba(43,38,34,.04),0 8px 28px rgba(43,38,34,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Pretendard",system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    line-height:1.7;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+  a{color:inherit;text-decoration:none}
+
+  /* Layout */
+  .wrap{display:grid;grid-template-columns:264px 1fr;max-width:1240px;margin:0 auto;gap:0}
+  .sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;padding:30px 20px 60px;
+    border-right:1px solid var(--line);background:rgba(250,247,244,.85);backdrop-filter:blur(6px)}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:24px}
+  .brand .logo{width:38px;height:38px;border-radius:11px;background:var(--clay);
+    display:grid;place-items:center;flex-shrink:0;box-shadow:var(--shadow)}
+  .brand .logo svg{width:22px;height:22px}
+  .brand b{font-size:15.5px;font-weight:800;display:block;line-height:1.25}
+  .brand span{display:block;font-size:11px;color:var(--ink-soft);font-weight:500;margin-top:1px}
+  .toc a{display:block;padding:8px 12px;border-radius:10px;font-size:13.5px;color:var(--ink-soft);
+    font-weight:500;transition:.15s;margin-bottom:2px}
+  .toc a:hover{background:var(--clay-soft);color:var(--clay-dark)}
+  .toc a.active{background:var(--clay);color:#fff;font-weight:700}
+  .toc .num{display:inline-block;width:22px;font-weight:800;opacity:.6}
+  .toc .sub{margin-top:16px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;padding:0 12px;margin-bottom:6px}
+  .legend{margin-top:22px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:11.5px;line-height:1.9;color:var(--ink-soft)}
+  .legend b{display:block;color:var(--ink);margin-bottom:6px;font-size:12px}
+  .legend .e{display:inline-block;width:18px}
+
+  .main{padding:0 0 110px;min-width:0}
+  .inner{max-width:780px;padding:0 44px}
+
+  /* Hero */
+  .hero{padding:64px 44px 52px;border-bottom:1px solid var(--line);margin-bottom:48px;background:
+      radial-gradient(120% 130% at 100% 0%, #F4DACB 0%, rgba(244,218,203,0) 55%),
+      radial-gradient(120% 130% at 0% 0%, #EFE7DF 0%, rgba(239,231,223,0) 50%)}
+  .hero .inner{padding:0;max-width:780px}
+  .kicker{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+    padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--clay-dark);margin-bottom:20px}
+  .kicker .pulse{width:7px;height:7px;border-radius:50%;background:var(--clay);box-shadow:0 0 0 0 rgba(217,119,87,.5);animation:p 2s infinite}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(217,119,87,.5)}70%{box-shadow:0 0 0 7px rgba(217,119,87,0)}100%{box-shadow:0 0 0 0 rgba(217,119,87,0)}}
+  h1{font-size:42px;font-weight:800;line-height:1.18;letter-spacing:-.03em;margin-bottom:16px}
+  h1 .hl{color:var(--clay)}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:620px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center}
+
+  /* Sections */
+  section{scroll-margin-top:24px;margin-bottom:60px}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:22px}
+  .sec-num{flex-shrink:0;width:42px;height:42px;border-radius:12px;background:var(--clay);color:#fff;
+    font-weight:800;font-size:18px;display:grid;place-items:center;box-shadow:var(--shadow)}
+  .sec-head h2{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.3}
+  .sec-head p{font-size:14px;color:var(--ink-soft);margin-top:4px}
+  h3{font-size:18px;font-weight:800;margin:30px 0 12px;letter-spacing:-.02em}
+  h3 .e{margin-right:7px}
+  p.body{margin-bottom:14px;color:var(--ink-soft)}
+  p.body strong{color:var(--ink);font-weight:700}
+  ul.body,ol.body{margin:0 0 16px;padding-left:6px;list-style:none}
+  ul.body li,ol.body li{position:relative;padding-left:26px;margin-bottom:9px;color:var(--ink-soft)}
+  ul.body li::before{content:"";position:absolute;left:6px;top:11px;width:7px;height:7px;border-radius:50%;background:var(--clay)}
+  ul.body li strong,ol.body li strong{color:var(--ink);font-weight:700}
+  ol.body{counter-reset:s}
+  ol.body li{counter-increment:s}
+  ol.body li::before{content:counter(s);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:7px;
+    background:var(--clay-soft);color:var(--clay-dark);font-size:12px;font-weight:800;display:grid;place-items:center}
+  strong{font-weight:700}
+  a.link{color:var(--blue);border-bottom:1px solid rgba(47,111,176,.45);font-weight:600;transition:.15s}
+  a.link:hover{background:var(--blue-soft);border-radius:3px}
+
+  /* Compare table */
+  .compare{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:13.5px;background:#fff;margin:8px 0 16px}
+  .compare th,.compare td{padding:13px 15px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  .compare thead th{background:var(--ink);color:#fff;font-weight:700;font-size:13px}
+  .compare tbody th{font-weight:700;background:var(--clay-soft);color:var(--clay-dark);white-space:nowrap;width:118px}
+  .compare tbody tr:last-child td,.compare tbody tr:last-child th{border-bottom:0}
+  .compare td b{color:var(--ink)}
+  .compare .yes{color:var(--good);font-weight:700}
+
+  /* Code / copyable block */
+  .code{position:relative;background:var(--code-bg);border-radius:14px;margin:14px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .code-top{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .code-top .label{font-size:11.5px;color:#B9AFA6;font-weight:600;display:flex;align-items:center;gap:9px}
+  .code-top .dots{display:flex;gap:5px}
+  .code-top .dots i{width:10px;height:10px;border-radius:50%;display:block}
+  .code-top .dots i:nth-child(1){background:#ff5f57}.code-top .dots i:nth-child(2){background:#febc2e}.code-top .dots i:nth-child(3){background:#28c840}
+  .copy{background:rgba(255,255,255,.1);border:0;color:#F3EDE7;font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:7px;cursor:pointer;transition:.15s;font-family:inherit}
+  .copy:hover{background:var(--clay)}
+  .copy.done{background:var(--good)}
+  .code pre{margin:0;padding:15px 16px;overflow-x:auto}
+  .code code{font-family:"Pretendard","SF Mono",ui-monospace,Consolas,monospace;font-size:13.5px;color:var(--code-ink);line-height:1.8;white-space:pre-wrap}
+
+  /* Callouts */
+  .note{display:flex;gap:13px;border-radius:14px;padding:16px 18px;margin:16px 0;font-size:14px;line-height:1.65}
+  .note .ic{flex-shrink:0;font-size:19px;line-height:1.5}
+  .note.tip{background:var(--good-soft);border:1px solid #CDE6D9}
+  .note.tip b{color:var(--good)}
+  .note.warn{background:var(--warn-soft);border:1px solid #F0DCBE}
+  .note.warn b{color:var(--warn)}
+  .note.info{background:var(--clay-soft);border:1px solid #EDD5C7}
+  .note.info b{color:var(--clay-dark)}
+  .note.lock{background:var(--blue-soft);border:1px solid #CCDFF0}
+  .note.lock b{color:var(--blue)}
+  .note b{display:block;margin-bottom:2px}
+  .note p{color:var(--ink-soft)}
+  .note strong{color:var(--ink)}
+
+  /* Steps (세로 타임라인) */
+  .steps{counter-reset:st;margin:10px 0 4px}
+  .step{position:relative;padding:0 0 22px 44px;border-left:2px solid var(--line);margin-left:15px}
+  .step:last-child{border-left-color:transparent;padding-bottom:2px}
+  .step::before{counter-increment:st;content:counter(st);position:absolute;left:-16px;top:-2px;width:30px;height:30px;
+    border-radius:50%;background:var(--clay);color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center;box-shadow:0 0 0 4px var(--bg)}
+  .step h4{font-size:15px;font-weight:800;margin-bottom:5px}
+  .step p{font-size:13.5px;color:var(--ink-soft)}
+  .step code{background:var(--clay-soft);color:var(--clay-dark);padding:2px 7px;border-radius:5px;font-size:12.5px;font-weight:600}
+
+  /* Tip / feature cards (2열) */
+  .tips{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0}
+  .tipcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);transition:.18s}
+  .tipcard:hover{transform:translateY(-3px);border-color:var(--clay)}
+  .tipcard .te{font-size:24px;margin-bottom:9px;display:block}
+  .tipcard h4{font-size:15px;font-weight:800;margin-bottom:6px}
+  .tipcard p{font-size:13px;color:var(--ink-soft);line-height:1.6}
+  .tipcard code{background:var(--clay-soft);color:var(--clay-dark);padding:2px 6px;border-radius:5px;font-size:12px;font-weight:600}
+
+  kbd{background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 7px;font-size:12.5px;font-weight:700;font-family:inherit;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+  footer{border-top:1px solid var(--line);padding:34px 44px;text-align:center;color:var(--ink-soft);font-size:13px;line-height:1.8}
+  footer b{color:var(--clay-dark)}
+  footer a{color:var(--blue);border-bottom:1px solid rgba(47,111,176,.4)}
+
+  #prog{position:fixed;top:0;left:0;height:3px;background:var(--clay);width:0;z-index:99;transition:width .1s}
+  #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
+    padding:11px 20px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.25s;z-index:100}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .m-toc{display:none}
+
+  @media(max-width:920px){
+    .wrap{grid-template-columns:1fr}
+    .sidebar{display:none}
+    .hero{padding:46px 22px 38px}
+    h1{font-size:30px}
+    .inner{padding:0 22px}
+    .tips{grid-template-columns:1fr}
+    .compare{font-size:12.5px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .compare tbody th{width:auto}
+    .m-toc{display:block;margin:0 22px 26px}
+    .m-toc summary{cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-weight:800;list-style:none;box-shadow:var(--shadow)}
+    .m-toc summary::-webkit-details-marker{display:none}
+    .m-toc summary::after{content:"▾";float:right;color:var(--clay)}
+    .m-toc[open] summary::after{content:"▴"}
+    .m-toc .toc{margin-top:8px;padding:6px}
+    .m-toc .toc a{display:block;padding:8px 12px;border-radius:9px;font-size:14px;color:var(--ink-soft);font-weight:600}
+    .m-toc .toc a:hover{background:var(--clay-soft)}
+  }
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="toast"></div>
+
+<div class="wrap">
+
+  <!-- ===== 좌측 고정 사이드바: 목차는 본문 섹션과 1:1로 맞추세요 ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round">
+          <path d="M12 2.8v6.4 M12 14.8v6.4 M2.8 12h6.4 M14.8 12h6.4
+                   M6.1 6.1l4.5 4.5 M13.4 13.4l4.5 4.5 M17.9 6.1l-4.5 4.5 M10.6 13.4l-4.5 4.5"/>
+        </svg>
+      </span>
+      <div><b>Aside 사용법 가이드</b><span>공식 문서 기준 · 2026. 9. 14.</span></div>
+    </div>
+    <nav class="toc" id="toc">
+      <div class="sub">시작하기</div>
+      <a href="#s1"><span class="num">01</span>Aside가 뭔가요?</a>
+      <a href="#s2"><span class="num">02</span>설치와 첫 설정</a>
+      <a href="#s3"><span class="num">03</span>화면 구성 둘러보기</a>
+      <div class="sub">일 맡기기</div>
+      <a href="#s4"><span class="num">04</span>일을 맡기는 입구</a>
+      <a href="#s5"><span class="num">05</span>모드와 권한</a>
+      <a href="#s6"><span class="num">06</span>지시문 잘 쓰는 법</a>
+      <a href="#s7"><span class="num">07</span>진행 중 개입과 결과물</a>
+      <a href="#s8"><span class="num">08</span>루틴으로 반복 예약</a>
+      <a href="#s9"><span class="num">09</span>Ultrabrowse와 AI 모델</a>
+      <div class="sub">보안·설정</div>
+      <a href="#s10"><span class="num">10</span>비밀번호 보관함 Vault</a>
+      <a href="#s11"><span class="num">11</span>기억과 개인정보</a>
+      <a href="#s12"><span class="num">12</span>Projects·스킬·MCP</a>
+      <a href="#s13"><span class="num">13</span>브라우저 기본기·단축키</a>
+      <a href="#s14"><span class="num">14</span>개발자 도구 CLI·MCP</a>
+      <div class="sub">더 보기</div>
+      <a href="#s15"><span class="num">15</span>요금제와 크레딧</a>
+      <a href="#s16"><span class="num">16</span>직무별 활용 사례</a>
+      <a href="#s17"><span class="num">17</span>문제 해결</a>
+      <a href="#extra"><span class="num">＋</span>용어 풀이·출처</a>
+    </nav>
+    <div class="legend">
+      <b>📌 박스 색 안내</b>
+      <span class="e">💡</span> 꿀팁 &nbsp;·&nbsp; <span class="e">✅</span> 체크<br/>
+      <span class="e">⚠️</span> 주의 &nbsp;·&nbsp; <span class="e">🔐</span> 중요<br/>
+      검은 예시 상자는 <b style="display:inline;color:var(--clay-dark)">복사</b> 버튼으로 바로 복사돼요.
+    </div>
+  </aside>
+
+  <!-- ===== 본문 ===== -->
+  <main class="main">
+
+    <header class="hero">
+      <div class="inner">
+        <span class="kicker"><span class="pulse"></span> 윈도우 정식 출시 · 2026년 9월 14일 기준</span>
+        <h1>AI가 대신 일하는 브라우저,<br/><span class="hl">Aside</span> 완전 가이드</h1>
+        <p class="lede">로그인해 둔 사이트에서 AI가 직접 클릭하고 입력하는 브라우저 Aside를, 공식 도움말 센터와 변경 기록을 바탕으로 설치부터 활용 사례까지 차근차근 정리했어요. 메뉴 이름은 앱 화면과 똑같이 찾을 수 있도록 영어 그대로 두었어요.</p>
+        <div class="hero-meta">
+          <span class="chip">⏱️ 읽는 시간 약 40분</span>
+          <span class="chip">💻 Windows · macOS 15 이상</span>
+          <span class="chip">🔰 처음 쓰는 분 기준</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 모바일 목차(데스크톱에선 숨김) -->
+    <details class="m-toc">
+      <summary>📑 목차 펼치기</summary>
+      <nav class="toc">
+        <a href="#s1">01 · Aside가 뭔가요?</a>
+        <a href="#s2">02 · 설치와 첫 설정</a>
+        <a href="#s3">03 · 화면 구성 둘러보기</a>
+        <a href="#s4">04 · 일을 맡기는 입구</a>
+        <a href="#s5">05 · 모드와 권한</a>
+        <a href="#s6">06 · 지시문 잘 쓰는 법</a>
+        <a href="#s7">07 · 진행 중 개입과 결과물</a>
+        <a href="#s8">08 · 루틴으로 반복 예약</a>
+        <a href="#s9">09 · Ultrabrowse와 AI 모델</a>
+        <a href="#s10">10 · 비밀번호 보관함 Vault</a>
+        <a href="#s11">11 · 기억과 개인정보</a>
+        <a href="#s12">12 · Projects·스킬·MCP</a>
+        <a href="#s13">13 · 브라우저 기본기·단축키</a>
+        <a href="#s14">14 · 개발자 도구 CLI·MCP</a>
+        <a href="#s15">15 · 요금제와 크레딧</a>
+        <a href="#s16">16 · 직무별 활용 사례</a>
+        <a href="#s17">17 · 문제 해결</a>
+        <a href="#extra">＋ 용어 풀이·출처</a>
+      </nav>
+    </details>
+
+    <div class="inner">
+
+      <!-- ===== 01 ===== -->
+      <section id="s1">
+        <div class="sec-head">
+          <div class="sec-num">1</div>
+          <div><h2>Aside가 뭔가요?</h2><p>대화만 하는 챗봇이 아니라, 브라우저 안에서 직접 클릭하고 입력하는 AI예요.</p></div>
+        </div>
+
+        <p class="body">Aside는 크롬과 같은 <strong>Chromium 엔진</strong>으로 만든 브라우저에 AI 에이전트를 얹은 제품이에요. 탭을 열고 검색하는 건 평소 쓰던 브라우저와 똑같아요. 다른 점은 입력창에 할 일을 적으면 AI가 <strong>이미 로그인해 둔 사이트</strong>에 들어가 메뉴를 누르고, 내용을 읽고, 파일을 받아 오는 일까지 이어서 한다는 거예요.</p>
+        <p class="body">일반 채팅형 AI는 사람이 자료를 복사해 붙여 넣어야 답을 해 줘요. Aside는 메일함·대시보드·업무 도구 화면을 직접 보면서 일해요. 따로 연동(API)을 만들지 않아도, <strong>사람이 볼 수 있는 화면이면 다룰 수 있다</strong>는 게 핵심이에요.</p>
+
+        <table class="compare">
+          <thead><tr><th>구분</th><th>일반 브라우저</th><th>일반 채팅형 AI</th><th>Aside</th></tr></thead>
+          <tbody>
+            <tr><th>사이트 조작</th><td>사람이 직접</td><td>복사·붙여넣기로 전달</td><td><b>AI가 클릭·입력</b></td></tr>
+            <tr><th>로그인 상태</th><td>사람만 활용</td><td>활용 어려움</td><td><b>저장된 로그인으로 자동 입력</b></td></tr>
+            <tr><th>여러 단계 일</th><td>사람이 반복</td><td>방법 안내 위주</td><td><b>끝까지 이어서 처리</b></td></tr>
+            <tr><th>반복 예약</th><td>불가</td><td>도구마다 다름</td><td><b>루틴으로 예약</b></td></tr>
+          </tbody>
+        </table>
+
+        <h3>할 수 있는 일</h3>
+        <div class="tips">
+          <div class="tipcard"><span class="te">🖱️</span><h4>실제 화면 조작</h4><p>메일·대시보드·사내 도구·메시지·결제 페이지를 사람처럼 클릭하고 입력해요.</p></div>
+          <div class="tipcard"><span class="te">🔑</span><h4>비밀번호는 숨긴 채 로그인</h4><p>보관함이 자동 입력만 해 주고, 비밀번호 원문은 AI에게 보이지 않아요.</p></div>
+          <div class="tipcard"><span class="te">📄</span><h4>파일 읽고 만들기</h4><p>PDF·워드·엑셀·파워포인트를 읽고, 결과 파일을 폴더에 저장해요.</p></div>
+          <div class="tipcard"><span class="te">🔁</span><h4>반복 예약과 기억</h4><p>매주 하는 일은 루틴으로 맡기고, 방문 기록을 기억으로 써서 설명을 줄여요.</p></div>
+        </div>
+
+        <h3>기본 정보</h3>
+        <table class="compare">
+          <thead><tr><th>항목</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><th>윈도우판</th><td><b>v1.0.914.1</b> · 2026년 9월 14일 정식 출시</td></tr>
+            <tr><th>맥판</th><td>macOS 15.0 이상</td></tr>
+            <tr><th>엔진</th><td>Chromium 152 (9월 10일 판 기준)</td></tr>
+            <tr><th>받는 곳</th><td><a class="link" href="https://aside.com/download" target="_blank" rel="noopener">aside.com/download</a> — 접속한 기기에 맞는 설치 파일을 안내해요</td></tr>
+            <tr><th>요금</th><td>Free $0 · Pro 월 $20 · Max 월 $200 · Enterprise 문의 (<a class="link" href="#s15">15장</a>)</td></tr>
+            <tr><th>성능 주장</th><td>Online-Mind2Web·BU-Bench-V1·Odyssey 벤치마크 1위 (회사 발표)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note info"><span class="ic">ℹ️</span><div><b>윈도우판은 맥판과 거의 같아요</b><p>회사 공동창업자 겸 CTO는 윈도우판에 맥판 기능의 99%를 담았다고 밝혔어요(PiunikaWeb, 9월 14일). 다만 도움말 문서 일부는 아직 맥 기준으로 적혀 있어서, 이 가이드는 단축키를 윈도우의 <kbd>Ctrl</kbd>로 적고 맥은 <kbd>Cmd</kbd>로 바꿔 읽으면 되도록 했어요.</p></div></div>
+      </section>
+
+      <!-- ===== 02 ===== -->
+      <section id="s2">
+        <div class="sec-head">
+          <div class="sec-num">2</div>
+          <div><h2>설치와 첫 설정</h2><p>핵심은 쓰던 브라우저의 기록과 로그인 상태를 옮겨 오는 거예요.</p></div>
+        </div>
+
+        <h3>준비물</h3>
+        <ul class="body">
+          <li><strong>컴퓨터</strong> — 윈도우 PC 또는 macOS 15.0 이상 맥. Aside가 곧 브라우저라서 따로 맞춰야 할 브라우저 버전은 없어요.</li>
+          <li><strong>Aside 계정</strong> — 설치 중에 만들 수 있어요. Aside가 기본 제공하는 AI 모델을 쓰려면 로그인이 필요해요.</li>
+          <li><strong>(선택) 쓰던 브라우저</strong> — 방문 기록·쿠키·북마크를 옮겨 오면 바로 일을 맡기기 편해요.</li>
+        </ul>
+
+        <h3>따라 하기</h3>
+        <div class="steps">
+          <div class="step"><h4>설치 파일 받아 실행</h4><p><a class="link" href="https://aside.com/download" target="_blank" rel="noopener">aside.com/download</a>에서 내 운영체제용 설치 파일을 받아 실행해요.</p></div>
+          <div class="step"><h4>로그인 또는 계정 만들기</h4><p>첫 화면에서 로그인하거나 새 계정을 만들어요. 이메일 인증도 같은 화면 안에서 끝나요.</p></div>
+          <div class="step"><h4>브라우저 데이터 가져오기</h4><p>가져올 브라우저를 고르고, 프로필이 여러 개면 원하는 프로필을 골라요. 시스템 접근을 허용하고 가져오기가 끝날 때까지 기다려요. 사파리는 사파리에서 <code>파일 › 내보내기</code>로 만든 ZIP 파일을 올려요.</p></div>
+          <div class="step"><h4>비밀번호 보관함(Aside Vault) 설정</h4><p>보관함을 켜고, 크롬·엣지·1Password 같은 곳에서 비밀번호를 가져와요. 건너뛰었다가 나중에 설정해도 돼요. 자세한 내용은 <a class="link" href="#s10">10장</a>.</p></div>
+          <div class="step"><h4>AI 구독 연결(선택) 후 첫 작업</h4><p>이미 쓰는 ChatGPT·Claude 구독이 있으면 연결하고(<a class="link" href="#s9">9장</a>), 원하는 결과와 사이트를 적어 첫 작업을 보내요.</p></div>
+        </div>
+
+        <h3>가져올 수 있는 것</h3>
+        <table class="compare">
+          <thead><tr><th>항목</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><th>데이터</th><td>방문 기록 · 쿠키 · 북마크 (북마크만 따로 가져오기도 가능)</td></tr>
+            <tr><th>브라우저</th><td>Chrome, Edge, Arc, Comet, Firefox, Dia, Atlas, Helium 등. 사파리는 맥에서 ZIP 파일로</td></tr>
+            <tr><th>나중에 추가</th><td><code style="font-size:12.5px">Settings › General</code>의 가져오기 메뉴</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note tip"><span class="ic">💡</span><div><b>쿠키를 가져오는 이유</b><p>쿠키에는 사이트 로그인 상태가 들어 있어요. 기존 브라우저에서 로그인해 둔 사이트를 Aside에서도 이어 쓸 수 있어서, AI에게 일을 맡길 때 로그인부터 다시 할 일이 줄어요.</p></div></div>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>가져오기가 실패하면</b><p>원래 브라우저 프로필이 아직 있는지 확인하고, <strong>원래 브라우저를 완전히 닫은 뒤</strong> 다시 시도해요. 같은 브라우저 프로필은 한 Aside 프로필에 두 번 가져올 수 없어요. 화면에 뜨는 오류는 <em>Browser import failed.</em>, 사파리는 <em>Please upload a ZIP file</em> 또는 <em>Failed to read the ZIP file</em> 등이에요.</p></div></div>
+
+        <h3>프로필을 여러 개 쓸 때</h3>
+        <ul class="body">
+          <li><strong>새 프로필은 로컬 프로필로 만들어져요.</strong> 온보딩 없이 바로 열리고, 로그인은 나중에 새 탭 페이지에서 해도 돼요. 그 프로필에서 Aside 제공 AI를 쓰려면 로그인이 필요해요.</li>
+          <li><strong>프로필 이름을 바꿀 수 있어요.</strong> Aside 계정 이름 대신 내가 정한 프로필 이름이 보여요.</li>
+          <li><strong>작업과 루틴은 만든 프로필에 묶여요.</strong> 브라우저를 다시 켜거나 창·프로필을 바꿔도 원래 프로필에서 돌아요.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 03 ===== -->
+      <section id="s3">
+        <div class="sec-head">
+          <div class="sec-num">3</div>
+          <div><h2>화면 구성 둘러보기</h2><p>세로 탭 사이드바, 에이전트 전용 탭 묶음, 새 탭 페이지, 오른쪽 사이드 패널이 기본 뼈대예요.</p></div>
+        </div>
+
+        <div class="tips">
+          <div class="tipcard"><span class="te">📑</span><h4>세로 탭 사이드바</h4><p>맨 위에 Chats(대화) 섹션, 그 아래 고정 탭과 일반 탭이 있어요. <kbd>Ctrl</kbd>+<kbd>S</kbd>로 접고 펴고, 접었을 때는 창 왼쪽 끝에 마우스를 대면 떠 있는 사이드바가 나와요.</p></div>
+          <div class="tipcard"><span class="te">🤖</span><h4>Agent Tabs</h4><p>AI가 일하면서 연 탭과 팝업이 한 묶음으로 모여요. 기본으로 음소거되고, CLI·MCP로 연결한 외부 에이전트가 쓰는 탭도 여기로 모여요.</p></div>
+          <div class="tipcard"><span class="te">🏠</span><h4>새 탭 페이지</h4><p>주소창에 Search·Ask AI 두 모드가 있어요. Chats·Routines 탭의 안 읽은 배지, 루틴 카드, 작업 미리보기가 보이고 승인 요청도 여기서 처리해요.</p></div>
+          <div class="tipcard"><span class="te">💬</span><h4>사이드 패널 (Ask Aside)</h4><p>오른쪽에 열리는 AI 창이에요. 보고 있는 페이지를 붙인 채 일을 맡기고, 폭은 끌어서 넓힐 수 있어요.</p></div>
+        </div>
+
+        <h3>탭 다루기</h3>
+        <ul class="body">
+          <li><strong>고정 탭(Pinned Tabs)</strong> — 탭을 오른쪽 클릭해 고정하거나, 세로 탭에서 맨 위로 끌어 올려요. 클라우드로 동기화돼요.</li>
+          <li><strong>탭 스위처</strong> — 탭이 두 개 이상일 때 <kbd>Ctrl</kbd>+<kbd>Tab</kbd>. 최근 사용 순서로 볼지 사이드바 순서로 볼지 설정에서 고를 수 있어요.</li>
+          <li><strong>분할 보기(Split View)</strong> — <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\</kbd>로 두 페이지를 나란히 띄워요. 원본 문서를 보면서 폼을 채우거나, AI가 일하는 화면을 옆에서 지켜볼 때 좋아요.</li>
+          <li><strong>북마크 섹션</strong> — <code style="font-size:12.5px">Settings › Appearance › Customize sidebar</code>에서 사이드바에 북마크 칸을 켤 수 있어요.</li>
+          <li><strong>가로 탭 모드</strong> — 크롬처럼 위쪽 가로 탭으로도 쓸 수 있고, 탭 폭을 창에 맞춰 줄이는 옵션은 <code style="font-size:12.5px">Settings › General</code>에 있어요.</li>
+          <li><strong>자동 PiP</strong> — 영상을 보다가 다른 탭으로 가면 작은 창으로 띄워 줘요. 기본은 꺼져 있고 <code style="font-size:12.5px">Settings › General</code>에서 켜요.</li>
+          <li><strong>메모리 세이버</strong> — 안 쓰는 탭의 메모리를 줄이는 기능이 기본으로 켜져 있어요(9월 10일 판부터).</li>
+        </ul>
+
+        <div class="note info"><span class="ic">ℹ️</span><div><b>AI가 쓰던 탭을 내가 쓰고 싶을 때</b><p>Agent Tabs 안의 탭을 누르면 따로 넘겨받기(Take over) 버튼을 누르지 않아도 일반 페이지처럼 쓸 수 있어요. 다른 탭으로 옮기면 그 탭은 다시 Agent Tabs 묶음으로 돌아가요(9월 14일 판).</p></div></div>
+      </section>
+
+      <!-- ===== 04 ===== -->
+      <section id="s4">
+        <div class="sec-head">
+          <div class="sec-num">4</div>
+          <div><h2>일을 맡기는 입구</h2><p>여러 사이트·파일을 오가는 일은 작업 페이지, 지금 보는 페이지가 기준이면 사이드 패널이에요.</p></div>
+        </div>
+
+        <table class="compare">
+          <thead><tr><th>입구</th><th>여는 법</th><th>이럴 때 좋아요</th></tr></thead>
+          <tbody>
+            <tr><th>새 탭 주소창</th><td>새 탭에서 <b>Ask AI</b> 모드</td><td>검색하듯 바로 지시할 때. 새 탭 기본 모드(Search/Ask AI)는 Settings › General에서 정해요</td></tr>
+            <tr><th>사이드 패널</th><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>보고 있는 페이지를 읽거나 그 페이지에서 일을 시작할 때</td></tr>
+            <tr><th>새 작업</th><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd></td><td>여러 사이트·계정·파일을 넘나드는 긴 일</td></tr>
+            <tr><th>미니 팝업</th><td>설정에서 전역 단축키 지정</td><td>다른 프로그램을 쓰다가 바로 물어볼 때</td></tr>
+            <tr><th>Handle with Aside</th><td>Gmail·Slack 메시지의 버튼</td><td>받은 메시지를 바로 일감으로 넘길 때</td></tr>
+          </tbody>
+        </table>
+
+        <h3>사이드 패널로 시작하기</h3>
+        <div class="steps">
+          <div class="step"><h4>기준이 될 페이지 열기</h4><p>일의 출발점이 되는 페이지(급여 포털, 계약서, 대시보드 등)를 열어요.</p></div>
+          <div class="step"><h4>사이드 패널 열기</h4><p><kbd>Ctrl</kbd>+<kbd>E</kbd>를 누르면 오른쪽에 Ask Aside가 열려요.</p></div>
+          <div class="step"><h4>페이지 첨부 확인</h4><p>입력창 위에 페이지 제목과 주소가 붙어 있어요. 이 페이지 없이 시작하려면 첨부를 지워요.</p></div>
+          <div class="step"><h4>할 일 적고 보내기</h4><p>결과·저장 위치·멈출 지점을 적어 보내요(<a class="link" href="#s6">6장</a>).</p></div>
+        </div>
+
+        <h3>알아 두면 편한 동작</h3>
+        <ul class="body">
+          <li><strong>초안은 페이지별로 남아요.</strong> 쓰다 말고 다른 페이지로 갔다 와도, 시작한 탭에 초안이 붙어 있어요.</li>
+          <li><strong>탭을 바꿔도 대화 유지</strong> — 탭을 옮겨도 사이드 패널의 현재 대화를 그대로 두는 설정이 있어요. 페이지 첨부 칩은 지금 보는 탭을 따라가요.</li>
+          <li><strong>@로 맥락 붙이기</strong> — 입력창에서 <kbd>@</kbd>를 치면 열린 탭·파일 등을 골라 붙여요. 입력창 안내 문구는 <em>Ask AI a task, @ for context</em>예요.</li>
+          <li><strong>붙일 수 있는 파일</strong> — PDF, DOC·DOCX, PPT·PPTX, XLS·XLSX, 이미지(아이폰 HEIC는 자동으로 PNG로 바꿔 읽어요), 로컬 폴더.</li>
+        </ul>
+
+        <h3>미니 팝업</h3>
+        <p class="body">어느 프로그램 위에서든 단축키로 작은 채팅창을 불러와요. 창 안에서 새 대화 시작, 대화 전환, 파일 첨부, @ 첨부, 모델·프로필·프로젝트 선택까지 할 수 있어요. 끌어서 옮기거나 크기를 바꾸고, <kbd>Esc</kbd>로 닫아요. 다시 열면 마지막 위치와 크기를 기억해요. 단축키는 <code style="font-size:12.5px">Settings › Keyboard shortcuts</code> 또는 <code style="font-size:12.5px">Settings › Mini popup</code>에서 정해요.</p>
+
+        <div class="note tip"><span class="ic">💡</span><div><b>입구 고르는 한 줄 기준</b><p>“이 페이지에서” 하는 일이면 <strong>사이드 패널</strong>, “여기저기 돌아다니며” 하는 일이면 <strong>새 작업</strong>, 메일·슬랙에서 온 일이면 <strong>Handle with Aside</strong>예요.</p></div></div>
+      </section>
+
+      <!-- ===== 05 ===== -->
+      <section id="s5">
+        <div class="sec-head">
+          <div class="sec-num">5</div>
+          <div><h2>모드와 권한</h2><p>작업마다 모드·권한·작업 폴더·모델을 정해요. 기본 권한은 Guard예요.</p></div>
+        </div>
+
+        <p class="body">새 작업 입력창 아래에는 네 가지 조절 장치가 있어요. 무엇을 볼 수 있고 무엇을 바꿀 수 있는지를 여기서 정하니, 파일이나 계정을 다루는 일이라면 보내기 전에 한 번 확인하세요.</p>
+
+        <table class="compare">
+          <thead><tr><th>조절 장치</th><th>선택지</th><th>하는 일</th></tr></thead>
+          <tbody>
+            <tr><th>모드</th><td><b>Default</b></td><td>평소 쓰는 브라우저 프로필(로그인·기록)로 실행해요</td></tr>
+            <tr><th>모드</th><td><b>Incognito</b></td><td>프로필 상태 없이 실행해요. 비밀번호 보관함은 쓸 수 없어요</td></tr>
+            <tr><th>권한</th><td><b>Read only</b></td><td>브라우저·파일을 살펴보기만 하고 파일은 바꾸지 않아요</td></tr>
+            <tr><th>권한</th><td><b>Guard</b> <span class="yes">기본값</span></td><td>승인한 폴더 안에서 일하고, 다른 폴더에 가려면 먼저 물어봐요</td></tr>
+            <tr><th>권한</th><td><b>Full access</b></td><td>컴퓨터 어디든 읽고 써요</td></tr>
+            <tr><th>작업 폴더</th><td>폴더 선택</td><td>이번 작업이 파일을 다룰 위치예요</td></tr>
+            <tr><th>모델</th><td>모델·속도</td><td>이번 작업에 쓸 모델과 생각 강도를 골라요(<a class="link" href="#s9">9장</a>)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note lock"><span class="ic">🔐</span><div><b>Full access여도 비밀번호는 안 보여요</b><p>Full access는 <strong>파일 접근 범위</strong>만 넓혀요. 저장된 비밀번호 값은 어떤 권한에서도 AI에게 드러나지 않아요. 그래도 컴퓨터 전체를 읽고 쓰는 권한이니, 꼭 필요한 작업에서만 켜세요.</p></div></div>
+
+        <h3>에이전트 기본 권한 · Settings › Agents</h3>
+        <p class="body">작업마다 정하는 것과 별개로, 모든 작업에 적용되는 기본 규칙이 있어요. <code style="font-size:12.5px">Settings › Agents</code>에서 아래로 내리면 권한 구역이 나와요.</p>
+        <ul class="body">
+          <li><strong>Sandbox</strong> — AI가 명령을 실행할 때 운영체제 수준으로 격리할지 정해요.</li>
+          <li><strong>File permissions</strong> — AI가 볼 수 있는 폴더, 고칠 수 있는 폴더 목록이에요.</li>
+          <li><strong>Tool permissions</strong> — 도구마다 아래 세 값 중 하나를 붙여요.</li>
+        </ul>
+        <table class="compare">
+          <thead><tr><th>값</th><th>동작</th></tr></thead>
+          <tbody>
+            <tr><th>Allow</th><td>묻지 않고 바로 써요</td></tr>
+            <tr><th>Ask</th><td>쓰기 전에 사용자에게 물어봐요</td></tr>
+            <tr><th>Deny</th><td>막아요. <b>Deny는 Ask·Allow보다 항상 우선</b>해요</td></tr>
+          </tbody>
+        </table>
+        <p class="body">작업에 따로 정한 권한이 있으면, 그 설정이 에이전트 기본값 <strong>위에 덧씌워져</strong> 적용돼요. 실행 중인 작업에서도 모델과 권한을 바꿀 수 있어요.</p>
+
+        <div class="note tip"><span class="ic">✅</span><div><b>처음 쓸 때 무난한 조합</b><p>권한은 기본값 <strong>Guard</strong> 그대로 두고, 파일을 만들거나 받아야 하는 작업에서만 <strong>작업 폴더</strong>를 지정해요. 남의 계정 정보가 섞이면 안 되는 조사라면 <strong>Incognito</strong> 모드가 편해요.</p></div></div>
+      </section>
+
+      <!-- ===== 06 ===== -->
+      <section id="s6">
+        <div class="sec-head">
+          <div class="sec-num">6</div>
+          <div><h2>지시문 잘 쓰는 법</h2><p>사이트·결과·저장 위치·멈출 지점. 이 네 가지만 적어도 결과가 달라져요.</p></div>
+        </div>
+
+        <p class="body">공식 문서가 꼽은 나쁜 예는 <strong>Handle my billing.(청구 건 처리해 줘)</strong> 한 줄이에요. AI는 어느 계정인지, 무엇을 만들어야 하는지, 어디까지 해도 되는지 모르니 엉뚱한 곳을 헤매거나 중간에 멈춰요.</p>
+
+        <ol class="body">
+          <li><strong>원하는 결과</strong> — “정리해 줘”보다 “날짜·가게·금액·결제수단 열로 된 표”처럼 구체적으로.</li>
+          <li><strong>사이트·계정·파일</strong> — 어디서 일할지 이름을 적어요.</li>
+          <li><strong>저장 위치와 형식</strong> — 다운로드 폴더, 파일 이름 규칙, 표 열 이름.</li>
+          <li><strong>멈출 지점과 하지 말 일</strong> — 보내기·게시·결제·설정 변경 전에 멈추라고 적어요.</li>
+          <li><strong>물어볼 조건</strong> — 인증번호, 애매한 선택이 나오면 물어보라고 적어요.</li>
+        </ol>
+
+        <table class="compare">
+          <thead><tr><th>구분</th><th>나쁜 예</th><th>좋은 예</th></tr></thead>
+          <tbody>
+            <tr><th>급여명세서</th><td>급여명세서 좀 받아 줘</td><td><b>Rippling에 로그인해서 이번 달 급여명세서 PDF를 다운로드 폴더에 저장해 줘. 인증번호가 필요하면 물어봐.</b></td></tr>
+            <tr><th>답장</th><td>메일 답장해 줘</td><td><b>이 고객 문의와 계정 페이지를 보고 문제를 짚어 답장 초안을 써 줘. 게시하기 전에 멈춰.</b></td></tr>
+            <tr><th>경비</th><td>영수증 정리해 줘</td><td><b>다운로드 폴더의 영수증 PDF로 날짜·가게·합계·결제수단 열의 경비 보고서 표를 만들어 줘.</b></td></tr>
+          </tbody>
+        </table>
+
+        <h3>그대로 쓰는 지시문 틀</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 지시문 틀 · 괄호만 바꿔 쓰기</span><button class="copy">복사</button></div>
+          <pre><code>[사이트·계정·파일]에서
+[원하는 결과]를 해 줘.
+결과는 [저장 위치 / 파일 이름 규칙 / 표 열 이름]으로 정리해 줘.
+[보내기·게시·결제·삭제·설정 변경]은 하지 말고 그 전에 멈춰.
+[로그인 인증·애매한 선택]이 나오면 나에게 물어봐.</code></pre>
+        </div>
+
+        <h3>공식 예시 (우리말로 옮김)</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 로그인 뒤 파일 받기</span><button class="copy">복사</button></div>
+          <pre><code>Rippling에 로그인해서 이번 달 급여명세서를 받아 PDF로 다운로드 폴더에 저장해 줘. MFA나 인증번호가 필요하면 물어봐.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 일정 잡고 답장 초안</span><button class="copy">복사</button></div>
+          <pre><code>이 Clay 받은편지함에서 NY 테크위크에 오는 영업 부사장들을 찾고, 다음 주 내 캘린더 빈 시간을 확인해서 시간 후보 두 개를 넣은 짧은 미팅 답장 초안을 써 줘. 보내기 전에 멈춰.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 계약서 날짜 뽑기</span><button class="copy">복사</button></div>
+          <pre><code>이 계약서 페이지에서 갱신일, 해지 통보 마감일, 청구 담당자, 통보 기간을 찾아 표로 정리해 줘. 앞으로 60일 안에 돌아오는 날짜는 표시해 줘.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 대시보드를 할 일로</span><button class="copy">복사</button></div>
+          <pre><code>이 대시보드에서 지난주보다 달라진 지표를 찾아 짧게 요약하고, 담당자가 필요한 항목은 Linear 작업 초안으로 만들어 줘. 작업을 실제로 만들기 전에 멈춰.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 청구 서류 모으기</span><button class="copy">복사</button></div>
+          <pre><code>이 청구 페이지에서 지난 분기 인보이스와 영수증을 찾아 PDF로 받고, 파일 이름을 인보이스 날짜와 업체 이름으로 바꿔 줘. 청구 설정은 절대 바꾸지 마.</code></pre>
+        </div>
+
+        <h3>학교 업무에 응용하면</h3>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>아래는 공식 문서에 없는 응용 예시예요</b><p>틀만 빌려 학교 상황에 맞게 바꾼 것이에요. 학생 개인정보가 담긴 사이트에서 쓸 때는 학교·교육청 지침을 먼저 확인하세요.</p></div></div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 응용 · 행사 일정표</span><button class="copy">복사</button></div>
+          <pre><code>구글 드라이브 ‘2학기 행사’ 폴더의 문서들에서 행사명, 날짜, 담당 부서만 뽑아 날짜순 표로 만들어 줘. 원본 파일은 고치지 마.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 응용 · 연수 신청 비교</span><button class="copy">복사</button></div>
+          <pre><code>내가 열어 둔 연수 안내 탭 세 개에서 연수명, 기간, 시간 수, 신청 마감일, 신청 주소를 표로 비교해 줘. 신청 버튼은 누르지 말고 표만 만들어.</code></pre>
+        </div>
+
+        <div class="note lock"><span class="ic">🔐</span><div><b>돈·개인정보·비밀번호·파일이 걸리면 제약을 꼭 적어요</b><p>공식 문서는 이런 일에 제약을 덧붙이라고 권해요. 공식 예시 대부분이 “보내기 전에 멈춰”, “게시하기 전에 멈춰”, “설정은 바꾸지 마”로 끝나는 이유예요.</p></div></div>
+      </section>
+
+      <!-- ===== 07 ===== -->
+      <section id="s7">
+        <div class="sec-head">
+          <div class="sec-num">7</div>
+          <div><h2>진행 중 개입과 결과물</h2><p>일하는 도중에 방향을 틀고, 기다리는 작업을 풀어 주고, 만든 파일을 확인해요.</p></div>
+        </div>
+
+        <h3>새 메시지를 언제 반영할까: Steer와 Queue</h3>
+        <p class="body">작업이 도는 동안 보낸 메시지를 어떻게 처리할지 <code style="font-size:12.5px">Settings › Agents › Chat</code>에서 골라요.</p>
+        <table class="compare">
+          <thead><tr><th>방식</th><th>동작</th><th>이럴 때</th></tr></thead>
+          <tbody>
+            <tr><th>Steer</th><td>지금 도는 실행에 바로 끼워 넣어요</td><td>다른 사이트를 쓰게 하거나, 하던 동작을 멈추게 할 때</td></tr>
+            <tr><th>Queue</th><td>지금 실행이 끝난 뒤에 적용해요</td><td>하던 흐름은 마저 끝내야 할 때</td></tr>
+          </tbody>
+        </table>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 공식 예시 · 방향 바로잡기</span><button class="copy">복사</button></div>
+          <pre><code>청구 페이지 말고 인보이스 페이지를 써. 이메일은 보내지 마.</code></pre>
+        </div>
+
+        <h3>작업이 나를 기다릴 때</h3>
+        <div class="steps">
+          <div class="step"><h4>작업 열기</h4><p>작업 목록이나 새 탭 페이지의 미리보기에서 기다리는 작업을 열어요.</p></div>
+          <div class="step"><h4>입력·승인 요청 찾기</h4><p>AI가 무엇을 묻거나 허락을 구하는지 확인해요.</p></div>
+          <div class="step"><h4>요청 내용 검토</h4><p>보내려는 글, 누르려는 버튼, 들어가려는 폴더가 맞는지 봐요.</p></div>
+          <div class="step"><h4>승인·거절 또는 답하기</h4><p>승인 카드에는 여러 줄 의견도 적을 수 있어요.</p></div>
+          <div class="step"><h4>재개</h4><p>화면에 재개(resume) 버튼이 보이면 눌러 이어 가게 해요.</p></div>
+        </div>
+        <table class="compare">
+          <thead><tr><th>상태</th><th>뜻과 처리하는 곳</th></tr></thead>
+          <tbody>
+            <tr><th>승인 대기</th><td>보내기·게시 같은 동작에 허락이 필요해요. <b>브라우저 화면의 승인 창에서 바로</b> 처리해요</td></tr>
+            <tr><th>답변 대기</th><td>AI가 질문했어요. <b>작업 상세 페이지</b>에서 답해요</td></tr>
+            <tr><th>알림 대기</th><td>답장·앱 이벤트 같은 알림이 오면 이어서 하도록 멈춰 있어요</td></tr>
+            <tr><th>오류 · 완료</th><td>오류 알림이 뜨면 Continue나 Retry로 다시 시작할 수 있어요</td></tr>
+          </tbody>
+        </table>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>사람이 직접 해야 하는 단계</b><p>다중 인증(MFA), 패스키 승인, CAPTCHA, 본인 인증은 AI가 대신하지 않아요. 화면에 보이는 단계를 직접 끝낸 뒤 작업을 재개하세요.</p></div></div>
+
+        <h3>결과물 확인하기</h3>
+        <ul class="body">
+          <li><strong>만든·바꾼 파일</strong> — 작업 상세 페이지에 모여요. 이미지·PDF·HTML·텍스트는 바로 미리 보고, 목록/격자 보기로 바꿀 수 있어요.</li>
+          <li><strong>다른 프로그램으로 열기</strong> — 파일을 다른 앱으로 열거나 파일 탐색기(맥은 Finder)에서 위치를 보여 줘요.</li>
+          <li><strong>보관 기간</strong> — 만든 파일은 작업이나 그 폴더를 지울 때까지 남아요. 일반 작업의 대화 기록은 작업 폴더에 저장돼요.</li>
+          <li><strong>완료 알림</strong> — 다른 창을 보고 있으면 끝났을 때 알림이 와요. 완료음은 내 소리 파일로 바꿀 수 있어요.</li>
+        </ul>
+
+        <h3>대화창에서 쓰는 기능</h3>
+        <table class="compare">
+          <thead><tr><th>기능</th><th>쓰는 법</th></tr></thead>
+          <tbody>
+            <tr><th>/new</th><td>새 대화 시작</td></tr>
+            <tr><th>/clear</th><td>지금 대화 비우기</td></tr>
+            <tr><th>/compact</th><td>긴 대화를 요약해 맥락 공간 확보(길어지면 자동으로도 해요)</td></tr>
+            <tr><th>/feedback</th><td>Aside에 의견 보내기</td></tr>
+            <tr><th>사이드 챗</th><td>본 작업은 계속 돌게 두고, 옆 패널에서 그 대화를 맥락 삼아 따로 질문해요</td></tr>
+            <tr><th>인용</th><td>대화 기록에서 문장을 골라 입력창에 인용해요</td></tr>
+            <tr><th>고정·보관·삭제</th><td>자주 여는 대화는 맨 위에 고정, 끝난 대화는 보관함으로, 필요 없으면 삭제</td></tr>
+            <tr><th>공유 링크</th><td>작업 상세에서 읽기 전용 스냅숏 링크를 복사해요. 도구 사용·이미지·오류까지 보이고, 링크를 회수하면 내려가요</td></tr>
+          </tbody>
+        </table>
+        <div class="note lock"><span class="ic">🔐</span><div><b>공유 링크는 공개 링크예요</b><p>링크를 받은 누구나 대화 전체를 볼 수 있어요. 계정 화면·개인정보가 찍힌 작업은 공유하지 말고, 공유했다면 다 본 뒤 링크를 회수하세요.</p></div></div>
+      </section>
+
+      <!-- ===== 08 ===== -->
+      <section id="s8">
+        <div class="sec-head">
+          <div class="sec-num">8</div>
+          <div><h2>루틴으로 반복 예약</h2><p>매번 시작하지 않아도 정해진 때에 일이 돌아가게 해요.</p></div>
+        </div>
+
+        <table class="compare">
+          <thead><tr><th>종류</th><th>동작</th><th>어울리는 일</th></tr></thead>
+          <tbody>
+            <tr><th>Cron 루틴</th><td>일정마다 <b>새 작업</b>을 시작해요</td><td>주간 요약처럼 매번 독립된 일</td></tr>
+            <tr><th>Heartbeat 루틴</th><td><b>기존 채팅을 깨워</b> 이어 가요</td><td>같은 대화에 새 맥락을 쌓아야 하는 일</td></tr>
+          </tbody>
+        </table>
+
+        <h3>관리하기 · Settings › Routines</h3>
+        <ul class="body">
+          <li><strong>만들기·고치기</strong> — 지시문과 일정을 적어요. 매일·매주는 물론 월 단위, 하루 여러 번도 돼요.</li>
+          <li><strong>일시정지·재개·삭제·지금 실행</strong> — 목록에서 바로 해요. 채팅으로 “이 루틴 멈춰”라고 해도 멈추거나 다시 켜요.</li>
+          <li><strong>이벤트로 깨우기</strong> — 시간 말고 받은편지함 같은 이벤트가 생겼을 때 깨어나는 루틴도 있어요.</li>
+          <li><strong>멈춘 이유 보기</strong> — 루틴이 멈추면 이유를 보여 주고, 다시 켜면 지금 브라우저 프로필에 다시 연결해요.</li>
+        </ul>
+
+        <h3>루틴 추천 받기</h3>
+        <div class="steps">
+          <div class="step"><h4>루틴 목록 열기</h4><p><code>Settings › Routines</code>로 가요.</p></div>
+          <div class="step"><h4>추천 찾기</h4><p><code>Find routine suggestions</code>(또는 <code>Find more suggestions</code>)를 눌러요. Aside가 반복되는 일을 찾아 초안을 만들어요.</p></div>
+          <div class="step"><h4>초안 검토</h4><p>무슨 일을 언제 하겠다는 제안인지 읽어요.</p></div>
+          <div class="step"><h4>고치기</h4><p>지시문, 일정, 이어 갈 채팅을 내 상황에 맞게 고쳐요.</p></div>
+          <div class="step"><h4>켜기</h4><p><code>Activate</code>를 누르면 켜지고, 필요 없으면 <code>Dismiss</code>.</p></div>
+        </div>
+
+        <div class="note info"><span class="ic">ℹ️</span><div><b>겹치면 건너뛰어요</b><p>앞 실행이 안 끝났는데 다음 시간이 오면 그 실행은 넘어가요. 이어 갈 채팅이 없어지면 루틴을 멈춰요. 무료는 켜 둔 루틴 <strong>3개</strong>까지, Pro부터 <strong>무제한</strong>이에요.</p></div></div>
+
+        <h3>루틴 예시 (공식 블로그 사례를 바탕으로)</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 매주 월요일 지표 브리핑</span><button class="copy">복사</button></div>
+          <pre><code>매주 월요일 오전 8시에 즐겨찾기한 대시보드 다섯 개를 열어 지난주와 비교하고, 크게 달라진 항목만 목록으로 정리해 줘. 각 항목에 대시보드 링크와 스크린샷을 붙여. 승인이나 설정 변경은 하지 마.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 매달 말 청구서 모으기</span><button class="copy">복사</button></div>
+          <pre><code>매달 마지막 날 업체 포털마다 로그인해서 이번 달 청구서 PDF를 받아 “업체명-연도-월.pdf”로 저장해 줘. 인증이 필요하거나 권한이 없어 못 받은 곳은 따로 목록으로 알려 줘.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 매주 가격 페이지 점검</span><button class="copy">복사</button></div>
+          <pre><code>매주 금요일에 지난번과 같은 업체 다섯 곳의 요금 페이지를 열어 요금제 이름·가격·한도를 지난 결과와 비교해 줘. 달라진 곳은 “변경”, 페이지가 없어진 곳은 “확인 필요”로 표시하고 스크린샷을 남겨.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 응용 · 공식 문서 아님 · 학교 공지 요약</span><button class="copy">복사</button></div>
+          <pre><code>매주 월요일 오전 7시 30분에 우리 학교 홈페이지 공지사항과 교육청 새 소식 게시판을 열어 지난 7일 동안 올라온 글의 제목, 날짜, 마감일, 링크를 표로 정리해 줘. 첨부 파일은 받지 말고 링크만 남겨.</code></pre>
+        </div>
+
+        <h3>Channels: 메신저로 원격 지시 (Pro)</h3>
+        <ul class="body">
+          <li><strong>연결</strong> — Slack·Telegram을 설정 안내에 따라 연결하면, 컴퓨터 앞에 없어도 메신저로 일을 시키고 결과를 받아요. 루틴 진행 알림은 연결된 Slack·Discord·Telegram 스레드에도 올라와요.</li>
+          <li><strong>명령</strong> — <code style="font-size:12.5px">/model</code> 모델 바꾸기, <code style="font-size:12.5px">/effort</code> 생각 강도, <code style="font-size:12.5px">/sessions</code> 대화 목록, <code style="font-size:12.5px">/usage</code> 사용량, <code style="font-size:12.5px">/new</code> 새 대화. Slack·Discord에서는 명령 앞에 공백을 하나 넣어요.</li>
+          <li><strong>음성 메모</strong> — Telegram 음성 메모는 받아 적어서 AI가 그대로 실행해요.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 09 ===== -->
+      <section id="s9">
+        <div class="sec-head">
+          <div class="sec-num">9</div>
+          <div><h2>Ultrabrowse와 AI 모델</h2><p>깊은 조사는 Ultrabrowse로, 모델은 Aside 제공·내 구독·API 키 중에서 골라요.</p></div>
+        </div>
+
+        <h3>Ultrabrowse</h3>
+        <p class="body">출처가 많이 필요하거나, 계획을 더 세우고 여러 페이지를 꼼꼼히 비교해야 하는 작업용 모드예요. 모델 선택기의 <strong>Reasoning</strong> 항목에 있고, 무료 요금제에서는 Pro 업그레이드 안내가 떠요.</p>
+        <table class="compare">
+          <thead><tr><th>구분</th><th>예</th></tr></thead>
+          <tbody>
+            <tr><th>쓸 때</th><td>출처 인용이 필요한 조사 · 업체·제품 비교 · 이전(마이그레이션) 계획 · 여러 사이트에 걸친 보안·규정·요금 점검</td></tr>
+            <tr><th>안 쓸 때</th><td>한 페이지짜리 질문 · 단순 검색 → 일반 작업으로 충분해요</td></tr>
+          </tbody>
+        </table>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 공식 예시 · 규정 검토</span><button class="copy">복사</button></div>
+          <pre><code>여행 경비 규정과 영수증 스프레드시트를 검토해서, 메모나 분류 수정, 관리자 승인이 필요한 환급 건을 표시해 줘. 참고한 규정 조항을 인용해.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 공식 예시 · 연락 대상 조사</span><button class="copy">복사</button></div>
+          <pre><code>NY 테크위크에 참가하는 회사 중 우리 고객상에 맞는 곳을 조사해 영업 부사장이나 매출 책임자를 찾아 줘. 참고한 페이지를 인용하고, 누구에게 먼저 연락할지 추천해 줘.</code></pre>
+        </div>
+
+        <h3>AI 연결 세 가지 · Settings › Models › Providers</h3>
+        <table class="compare">
+          <thead><tr><th>종류</th><th>연결 방법</th><th>대상</th></tr></thead>
+          <tbody>
+            <tr><th>Aside</th><td>Aside 계정 로그인</td><td>요금제에 포함된 모델. 크레딧에서 차감돼요</td></tr>
+            <tr><th>Subscription</th><td><b>Connect</b> → Subscription → 팝업에서 로그인(OAuth)</td><td>ChatGPT Plus·Pro, Claude Pro·Max, GitHub Copilot. 변경 기록상 Grok, Kimi Code, Qwen Token Plan도 추가됐어요</td></tr>
+            <tr><th>API</th><td><b>Connect</b> → API → 키 입력</td><td>Anthropic, OpenAI, OpenRouter, Google, xAI, Vercel AI Gateway, Cloudflare AI Gateway. 변경 기록상 DeepSeek, Kimi, Mistral, Command Code도 있어요</td></tr>
+            <tr><th>로컬</th><td>Ollama · LM Studio 연결</td><td>내 컴퓨터에서 도는 모델. API 키 없이 써요</td></tr>
+          </tbody>
+        </table>
+        <div class="note tip"><span class="ic">💡</span><div><b>이미 AI 구독이 있다면</b><p>ChatGPT나 Claude 유료 구독을 연결하면 그 구독 사용량으로 돌아가서, Aside 크레딧을 아낄 수 있어요. 지원되는 구독은 모델 선택기 옆에 사용량 표시도 보여 줘요.</p></div></div>
+
+        <h3>모델 고르기</h3>
+        <ul class="body">
+          <li><strong>기본 모델</strong> — <code style="font-size:12.5px">Settings › Models › Task models</code>에서 정해요. 9월 2일 변경 기록 기준 Aside 기본값은 GPT-5.6 Luna예요.</li>
+          <li><strong>작업마다</strong> — 입력창의 모델 선택기에서 모델과 생각 강도(effort)를 고르고, 지원 모델은 Fast 모드를 켤 수 있어요.</li>
+          <li><strong>맥락 사용량</strong> — 모델 선택기 옆에 대화가 얼마나 찼는지 보여 줘요.</li>
+          <li><strong>새 모델</strong> — 모델 목록은 서버에서 받아 와서, 앱을 업데이트하지 않아도 새 모델이 나타나요.</li>
+          <li><strong>이미지 생성</strong> — 채팅에서 이미지를 만들고 고칠 수 있어요. 쓸 모델은 <code style="font-size:12.5px">Settings › AI</code>에서 고르고, ChatGPT를 연결했으면 그것도 고를 수 있어요.</li>
+        </ul>
+        <div class="note info"><span class="ic">ℹ️</span><div><b>요금은 어디로 나가나요?</b><p>Aside 크레딧은 <strong>Aside 모델</strong>에만 쓰여요. 내 API 키로 연결한 모델은 그 회사 계정으로 요금이 청구될 수 있어요. 한 번 연결한 키는 제공자 메뉴에서 고치거나 연결을 끊을 수 있어요.</p></div></div>
+      </section>
+
+      <!-- ===== 10 ===== -->
+      <section id="s10">
+        <div class="sec-head">
+          <div class="sec-num">10</div>
+          <div><h2>비밀번호 보관함 Aside Vault</h2><p>AI가 로그인 화면을 넘어가게 해 주되, 비밀번호 원문은 끝까지 보여 주지 않아요.</p></div>
+        </div>
+
+        <p class="body">Aside Vault는 로그인 정보를 저장했다가 사이트에 <strong>자동 입력</strong>해 주는 보관함이에요. AI는 “로그인하기” 동작만 요청할 수 있고, 비밀번호 값 자체는 받지 않아요. 급여 시스템, 대시보드, 메일, 고객 관리 도구, 청구 페이지, 사내 도구처럼 로그인 뒤에 있는 곳에서 일을 맡길 때 필요해요.</p>
+
+        <h3>AI가 로그인하는 흐름</h3>
+        <div class="steps">
+          <div class="step"><h4>로그인 화면 도착</h4><p>작업 중에 AI가 로그인 페이지를 만나요.</p></div>
+          <div class="step"><h4>대상 주소 확인</h4><p>지금 페이지 주소가 저장된 로그인과 맞는지 확인해요.</p></div>
+          <div class="step"><h4>AI 접근 정책 확인</h4><p>그 항목을 AI가 써도 되는지 정책을 봐요.</p></div>
+          <div class="step"><h4>허용된 항목만 자동 입력</h4><p>조건이 맞으면 보관함이 페이지에 직접 채워 넣어요. MFA·패스키·CAPTCHA가 나오면 사람이 끝내요.</p></div>
+        </div>
+
+        <h3>AI 접근 정책 · Settings › Passwords › Access policy for AI agents</h3>
+        <table class="compare">
+          <thead><tr><th>정책</th><th>동작</th></tr></thead>
+          <tbody>
+            <tr><th>Always allow</th><td>언제든 저장된 로그인을 쓸 수 있어요 <span class="yes">기본값</span></td></tr>
+            <tr><th>While unlocked</th><td>보관함이 잠금 해제된 동안만 쓸 수 있어요</td></tr>
+            <tr><th>Never</th><td>AI는 저장된 로그인을 쓰지 못해요</td></tr>
+          </tbody>
+        </table>
+        <p class="body">가져온 항목은 항목마다 정책을 따로 정할 수 있어요. <strong>시크릿(Incognito) 작업에서는 어떤 정책이든 보관함을 쓸 수 없어요.</strong></p>
+
+        <h3>채워 주는 것</h3>
+        <div class="tips">
+          <div class="tipcard"><span class="te">🔑</span><h4>로그인</h4><p>아이디·비밀번호 제안, 저장 안내, 새 비밀번호 생성. 전화번호 로그인 칸도 알아봐요.</p></div>
+          <div class="tipcard"><span class="te">🛡️</span><h4>패스키·FIDO2·일회용 코드</h4><p>설정 페이지의 OTP QR 코드를 알아보고 해당 로그인에 저장해 주고, 다음부터 코드를 채워요.</p></div>
+          <div class="tipcard"><span class="te">💳</span><h4>카드·청구지</h4><p>결제 창 안의 카드 번호·CVV·청구지 주소를 저장하고 채워요. 복사한 카드 번호는 클립보드에서 자동으로 지워요.</p></div>
+          <div class="tipcard"><span class="te">🪪</span><h4>신원 정보</h4><p>이름·생년월일·전화번호를 채우고, 한국 본인인증 입력 폼도 지원해요. 실패하면 이유를 보여 줘요.</p></div>
+        </div>
+
+        <h3>자동 입력 설정하기</h3>
+        <div class="steps">
+          <div class="step"><h4>설정 열기</h4><p><code>Settings › Passwords</code>로 가요.</p></div>
+          <div class="step"><h4>기본 비밀번호 관리자 선택</h4><p>Aside가 관리하게 하려면 <code>Use default password manager</code>를 켜요.</p></div>
+          <div class="step"><h4>자동 입력 켜기</h4><p><code>Autofill</code>을 켜고 URL을 어떻게 맞출지 골라요. 자동 입력은 기본으로 켜져 있어요.</p></div>
+          <div class="step"><h4>제외 사이트 지정</h4><p>채우면 안 되는 도메인은 <code>Excluded domains</code>에 넣어요.</p></div>
+          <div class="step"><h4>예외 조건 정하기</h4><p>보안 연결이 아닌(http) 사이트에서 제안을 보일지, 시크릿 창에서도 채울지 정해요.</p></div>
+        </div>
+        <p class="body">google.com·youtube.com·gmail.com처럼 한 계정을 함께 쓰는 도메인은 기본으로 같은 사이트로 취급해요.</p>
+
+        <h3>다른 곳에서 비밀번호 가져오기</h3>
+        <p class="body"><code style="font-size:12.5px">Settings › Passwords › Import</code>에서 가져올 곳을 고르고 내보낸 파일을 선택해요. 지원 대상은 1Password, Apple Passwords, Bitwarden, Chrome, Dashlane, Edge, Firefox, LastPass(CSV), Proton Pass(암호화 ZIP 포함), Helium, 그리고 일반 CSV예요. 일반 CSV는 첫 줄이 아래 열 이름이어야 해요.</p>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 일반 CSV 첫 줄</span><button class="copy">복사</button></div>
+          <pre><code>name,url,username,password</code></pre>
+        </div>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>내보낸 파일은 지워 두세요</b><p>다른 관리자에서 내보낸 CSV에는 비밀번호가 그대로 적혀 있어요. 가져오기를 확인한 뒤, 백업이 꼭 필요한 게 아니면 파일을 지우세요.</p></div></div>
+
+        <h3>잠금 해제와 보안 구조</h3>
+        <ul class="body">
+          <li><strong>Windows Hello · Touch ID</strong> — 지원 기기에서 처음 잠금을 풀 때 <code style="font-size:12.5px">Enable</code>을 누르면, 다음부터 마스터 비밀번호 대신 기기 인증으로 풀어요. <code style="font-size:12.5px">Not now</code>를 눌렀다면 나중에 <code style="font-size:12.5px">Settings › Passwords</code>에서 켜요. 푸는 방법만 바뀔 뿐, AI 접근 정책은 그대로예요.</li>
+          <li><strong>회사 설명</strong> — 보관함 데이터는 기기 안에서 하드웨어 기반 종단간 암호화로 보호되고, AI 접근은 작업에 필요한 항목으로 범위를 좁히며, AI가 언제 어떤 항목을 썼는지 감사 기록을 남긴다고 해요. 결제·게시·메시지 같은 민감한 동작은 사용자 승인을 받아요.</li>
+          <li><strong>동기화</strong> — 동기화 전에 암호화하고, 복사한 비밀 값은 잠시 뒤 클립보드에서 지워요.</li>
+        </ul>
+        <div class="note lock"><span class="ic">🔐</span><div><b>보관함 초기화는 되돌릴 수 없어요</b><p><code>Settings › Passwords › Clear vault data</code>는 저장 항목, 보관함 키, 보관함을 모두 지우고 빈 Personal 보관함을 새로 만든 뒤 그 상태를 동기화해요. 반드시 <strong>내보내기로 백업</strong>한 다음에 누르세요.</p></div></div>
+      </section>
+
+      <!-- ===== 11 ===== -->
+      <section id="s11">
+        <div class="sec-head">
+          <div class="sec-num">11</div>
+          <div><h2>기억과 개인정보</h2><p>무엇을 기억할지, 얼마나 둘지, 무엇을 지울지 내가 정해요.</p></div>
+        </div>
+
+        <h3>Aside가 기억하는 것</h3>
+        <div class="tips">
+          <div class="tipcard"><span class="te">🧭</span><h4>방문 기록의 쓰임</h4><p>어떤 사이트를 어떤 일에 썼는지 기억해 다음 작업의 맥락으로 써요.</p></div>
+          <div class="tipcard"><span class="te">👥</span><h4>작업 속 핵심 정보</h4><p>사람·회사·결정 같은 핵심 내용을 작업이 끝날 때마다 뽑아 둬요.</p></div>
+          <div class="tipcard"><span class="te">🗺️</span><h4>사이트 사용법</h4><p>특정 사이트에서 통했던 경로와 방법을 기억해요.</p></div>
+          <div class="tipcard"><span class="te">🔗</span><h4>이어지는 일</h4><p>어제 본 자료를 다시 설명하지 않아도 지난 작업을 이어 가요.</p></div>
+        </div>
+        <p class="body">회사 설명에 따르면 기억은 <strong>마크다운 문서로 내 기기에 저장</strong>되고, 틀린 내용은 직접 고치거나 예전 판으로 되돌릴 수 있어요. 채팅 안에서도 기억 파일이 어떻게 바뀌었는지 줄 단위 차이로 보여 줘요.</p>
+
+        <h3>메모리 설정 · Settings › Memory</h3>
+        <table class="compare">
+          <thead><tr><th>메뉴</th><th>하는 일</th></tr></thead>
+          <tbody>
+            <tr><th>Overview</th><td>저장된 기억을 보고 고쳐요</td></tr>
+            <tr><th>History</th><td>기억이 언제 어떻게 바뀌었는지 봐요</td></tr>
+            <tr><th>Configure</th><td>메모리 켜기·끄기, 보관 기간 선택</td></tr>
+          </tbody>
+        </table>
+        <table class="compare">
+          <thead><tr><th>보관 기간</th><th>이럴 때</th></tr></thead>
+          <tbody>
+            <tr><th>Never forget</th><td>오래 쌓아 두고 쓰고 싶을 때</td></tr>
+            <tr><th>90 days</th><td>한 학기·한 분기 정도만 이어 쓰면 될 때</td></tr>
+            <tr><th>30 days</th><td>그날그날의 기록을 빨리 잊게 하고 싶을 때</td></tr>
+          </tbody>
+        </table>
+        <div class="note info"><span class="ic">ℹ️</span><div><b>메모리를 끄면</b><p>새 채팅과 작업이 더 이상 기억을 만들지 않아요. Projects(<a class="link" href="#s12">12장</a>)에는 프로젝트마다 따로 쌓이는 Project memory도 있어요.</p></div></div>
+
+        <h3>개인정보 설정 · Settings › Security &amp; Privacy</h3>
+        <table class="compare">
+          <thead><tr><th>설정</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><th>방문 기록 삭제</th><td>기간과 데이터 종류를 골라 지워요</td></tr>
+            <tr><th>방문 기록 보기</th><td>Aside 프로필에 쌓인 기록 확인</td></tr>
+            <tr><th>제3자 쿠키</th><td><b>Allow</b> 또는 <b>Block all</b></td></tr>
+            <tr><th>사용 통계 공유</th><td>Analytics sharing — <b>기본으로 켜져 있어요</b></td></tr>
+            <tr><th>광고·사이트·고급</th><td>광고 주제, 사이트 권한, DNS·SSL 인증서·세이프 브라우징 설정 페이지로 이동</td></tr>
+          </tbody>
+        </table>
+
+        <h3>방문 기록 지우기</h3>
+        <div class="steps">
+          <div class="step"><h4>설정 열기</h4><p><code>Settings › Security &amp; Privacy</code>에서 <code>Delete browsing history</code>를 눌러요.</p></div>
+          <div class="step"><h4>기간 고르기</h4><p>최근 15분 · 30분 · 24시간 · 7일 · 4주 · 전체 중에서 골라요.</p></div>
+          <div class="step"><h4>종류 고르기</h4><p>방문 기록 · 쿠키와 사이트 데이터 · 캐시된 이미지와 파일 · 다운로드 기록 · 자동완성 양식 데이터 · 사이트 저장소.</p></div>
+          <div class="step"><h4>삭제 확인</h4><p>확인을 누르면 Aside 브라우저 프로필에서 지워져요.</p></div>
+        </div>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>쿠키를 지우면 로그인도 풀려요</b><p>“쿠키와 사이트 데이터”를 지우면 사이트 로그인 상태가 사라져서, AI가 다시 로그인해야 해요. 방문 기록만 지우려면 그 항목만 고르세요. 사용 통계를 보내고 싶지 않다면 Analytics sharing을 꺼 두세요.</p></div></div>
+        <p class="body">회사는 작업·기억·데이터가 기기에 남고 AI 모델 회사와 공유되지 않는다고 설명해요(aside.com). 다만 작업을 처리하려면 지시문과 화면 내용이 고른 AI 모델로 전달되니, 민감한 화면에서는 모델 선택과 권한을 함께 살피세요.</p>
+      </section>
+
+      <!-- ===== 12 ===== -->
+      <section id="s12">
+        <div class="sec-head">
+          <div class="sec-num">12</div>
+          <div><h2>Projects·스킬·MCP</h2><p>자주 하는 일을 공간·절차·외부 도구로 묶어 더 똑똑하게 맡겨요.</p></div>
+        </div>
+
+        <h3>Projects: 일마다 전용 공간</h3>
+        <p class="body">파일·지시문·작업 폴더가 따로 필요한 일을 한곳에 묶는 기능이에요. 예를 들어 “2학기 행사”, “연구 보고서”처럼 오래 이어지는 일을 프로젝트로 만들어 두면, 그 안의 작업들이 같은 규칙과 자료를 공유해요.</p>
+        <div class="steps">
+          <div class="step"><h4>프로젝트 만들기</h4><p><code>Settings</code>의 Projects 페이지에서 이름·아이콘·색·작업 폴더를 정해 만들어요.</p></div>
+          <div class="step"><h4>자료와 지시문 넣기</h4><p>프로젝트 페이지에서 원본 파일을 추가하고, 프로젝트 전용 <code>AGENTS.md</code> 지시문을 적어요.</p></div>
+          <div class="step"><h4>작업에서 고르기</h4><p>작업 입력창의 프로젝트 칩에서 프로젝트를 골라 보내요. 이미 있는 채팅도 메뉴에서 프로젝트로 옮길 수 있어요(하위 채팅도 함께 옮겨져요).</p></div>
+          <div class="step"><h4>모아 보고 정리하기</h4><p>프로젝트 작업을 한곳에서 보고, 끝나면 보관해요. 보관해도 작업과 루틴은 지워지지 않고, 보관한 프로젝트는 삭제할 수 있어요.</p></div>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> AGENTS.md 예시 · 직접 작성한 예</span><button class="copy">복사</button></div>
+          <pre><code># 2학기 행사 프로젝트 규칙
+- 결과 표는 날짜 오름차순, 열은 날짜 · 행사명 · 담당 부서 · 비고
+- 원본 파일은 수정하지 말고, 새 파일은 작업 폴더의 결과 폴더에 저장
+- 메일·메시지 보내기, 게시판 글쓰기는 하지 말고 초안까지만
+- 날짜가 문서마다 다르면 둘 다 적고 "확인 필요"로 표시</code></pre>
+        </div>
+
+        <h3>스킬: 우리만의 절차 저장</h3>
+        <ul class="body">
+          <li><strong>무엇</strong> — 반복되는 브라우저 절차(예: 스테이징 QA 순서, 청구서 받는 법)를 재사용할 수 있게 저장한 묶음이에요.</li>
+          <li><strong>만들기</strong> — 기본 제공 스킬 만들기 도구로 만들고, 에이전트가 기억·스킬 파일을 직접 써 줄 수도 있어요.</li>
+          <li><strong>부르기</strong> — 입력창에서 <kbd>/</kbd>를 치면 스킬이 목록에 나와요. 지시문에 “우리 ○○ 스킬로 해 줘”라고 적어도 돼요.</li>
+        </ul>
+
+        <h3>MCP 서버: 외부 도구 붙이기</h3>
+        <ul class="body">
+          <li><strong>무엇</strong> — MCP(Model Context Protocol)는 AI에 외부 도구를 연결하는 표준 방식이에요. 연결하면 Aside 에이전트가 그 도구의 기능을 쓸 수 있어요.</li>
+          <li><strong>연결</strong> — MCP 설정 화면의 서버 추가 대화상자에서 로컬 서버나 인증이 필요한 HTTP 커넥터를 추가해요. 인증이 필요한 서버는 도구를 쓰기 전에 OAuth 로그인을 먼저 띄워 줘요.</li>
+          <li><strong>실패하면</strong> — 연결 실패 알림과 실제 오류 문구, 로컬 서버의 오류 출력을 보여 줘요.</li>
+        </ul>
+        <div class="note info"><span class="ic">ℹ️</span><div><b>반대 방향도 돼요</b><p>Aside를 다른 코딩 에이전트의 MCP 서버로 붙이는 방법은 <a class="link" href="#s14">14장</a>에 있어요.</p></div></div>
+
+        <h3>에이전트 실행 환경</h3>
+        <p class="body">파일 변환이나 데이터 처리처럼 AI가 코드를 돌려야 하는 작업을 위해, <code style="font-size:12.5px">Settings › Agents</code>에서 Node.js·Python·파일 검색 도구를 설치할 수 있어요(터미널에서는 <code style="font-size:12.5px">aside runtime install</code>).</p>
+      </section>
+
+      <!-- ===== 13 ===== -->
+      <section id="s13">
+        <div class="sec-head">
+          <div class="sec-num">13</div>
+          <div><h2>브라우저 기본기·단축키</h2><p>매일 쓰는 브라우저로서 알아 두면 손이 빨라지는 것들이에요.</p></div>
+        </div>
+
+        <h3>단축키 <span style="font-size:13px;color:var(--ink-soft);font-weight:600">(맥은 Ctrl 대신 Cmd)</span></h3>
+        <table class="compare">
+          <thead><tr><th>단축키</th><th>동작</th></tr></thead>
+          <tbody>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>E</kbd></th><td>Ask Aside (사이드 패널)</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd></th><td>새 작업</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>S</kbd></th><td>사이드바 열고 닫기</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></th><td>현재 주소 복사</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>\</kbd></th><td>탭 나누기(분할 보기). <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>-</kbd>도 같아요</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>Tab</kbd></th><td>탭 스위처 (Ctrl을 누른 채 Tab으로 넘기기)</td></tr>
+            <tr><th><kbd>Ctrl</kbd>+<kbd>1</kbd>~<kbd>9</kbd></th><td>번호 순서의 탭으로 이동</td></tr>
+          </tbody>
+        </table>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>Ctrl+S는 “저장”이 아니에요</b><p>다른 브라우저에서 페이지 저장이던 <kbd>Ctrl</kbd>+<kbd>S</kbd>가 Aside에서는 사이드바 열고 닫기예요. 사이드바가 갑자기 사라지면 한 번 더 누르세요.</p></div></div>
+
+        <h3>선택 단축 동작과 올가미(Lasso)</h3>
+        <p class="body">페이지에서 글자를 고르면 <strong>Summarize(요약)·Translate(번역)</strong>이, 올가미로 영역을 두르면 <strong>Copy code(코드 복사)·Search image(이미지 검색)</strong>가 떠요. 기본으로 켜져 있고, <code style="font-size:12.5px">Settings › Lasso</code>에서 끄기·순서 바꾸기·고치기·지우기·추가를 해요. 올가미 켜는 단축키도 바꿀 수 있어요.</p>
+        <ul class="body">
+          <li><strong>동작 종류</strong> — 프롬프트 실행, 선택한 내용 복사, 주소 열기 중에서 골라요.</li>
+          <li><strong>자리표시</strong> — 템플릿에 <code style="font-size:12.5px">{text}</code>를 넣으면 고른 글자가, 올가미 동작에서는 <code style="font-size:12.5px">{code}</code>·<code style="font-size:12.5px">{image}</code>도 들어가요.</li>
+          <li><strong>번역</strong> — 오른쪽 클릭 메뉴의 번역은 고른 글자를 기기 안에서 번역해요.</li>
+        </ul>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 공식 예시 옮김 · 조항 요약 단축 동작</span><button class="copy">복사</button></div>
+          <pre><code>이 조항을 쉬운 말로 요약하고, 내가 챙겨야 할 의무를 목록으로 뽑아 줘:
+{text}</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 공식 예시 옮김 · 영수증 표 읽기</span><button class="copy">복사</button></div>
+          <pre><code>이 영수증 표를 읽고 날짜, 가게, 합계, 결제수단 열로 된 행을 돌려줘:
+{text}</code></pre>
+        </div>
+
+        <h3>그 밖의 기본기</h3>
+        <ul class="body">
+          <li><strong>화면 캡처</strong> — 오른쪽 클릭 › <em>Capture</em>로 보이는 화면·전체 페이지·마우스를 올린 요소·자유 영역을 잡아 PNG로 복사하거나 저장해요. 맥에서는 Cmd+Shift를 누른 채 끌어도 돼요. 끄려면 <code style="font-size:12.5px">Settings › General</code>.</li>
+          <li><strong>탭 검색</strong> — 사이드바의 탭 검색(명령 팔레트)에서 열린 탭·대화·방문 기록·북마크·설치한 확장 프로그램까지 찾아요.</li>
+          <li><strong>확장 프로그램</strong> — 크롬 계열이라 확장 프로그램을 설치해 쓸 수 있고, 툴바에서 고정·해제해요.</li>
+          <li><strong>세션 복원</strong> — 브라우저를 다시 켜면 이전에 열어 둔 탭을 되살려요.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 14 ===== -->
+      <section id="s14">
+        <div class="sec-head">
+          <div class="sec-num">14</div>
+          <div><h2>개발자 도구 CLI·MCP</h2><p>코딩 에이전트가 로그인 뒤 페이지(CI 로그, 대시보드, 스테이징)를 직접 확인하게 해요.</p></div>
+        </div>
+
+        <table class="compare">
+          <thead><tr><th>도구</th><th>이럴 때</th></tr></thead>
+          <tbody>
+            <tr><th>CLI</th><td>개발 흐름 안에서 터미널로 브라우저 확인을 시킬 때</td></tr>
+            <tr><th>MCP</th><td>코딩 에이전트(Claude Code, Codex 등)가 CI 로그·기능 플래그·모니터링 같은 비공개 페이지 증거를 가져와야 할 때</td></tr>
+            <tr><th>REPL</th><td>화면 검사·스크린샷·다운로드처럼 정해진 순서의 조작을 정확히 돌릴 때</td></tr>
+          </tbody>
+        </table>
+
+        <h3>설치</h3>
+        <p class="body">가장 쉬운 방법은 <code style="font-size:12.5px">Settings › Developers</code>에서 설치·업데이트·재설치 버튼을 누르는 거예요(윈도우 포함). 맥·리눅스 터미널에서는 설정 페이지에 나오는 아래 명령을 써요.</p>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> CLI 설치 (맥·리눅스 셸)</span><button class="copy">복사</button></div>
+          <pre><code>curl -fsSL https://releases.aside.com/install.sh | bash</code></pre>
+        </div>
+
+        <h3>터미널에서 브라우저 작업</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 작업 시작 · 이어 하기</span><button class="copy">복사</button></div>
+          <pre><code>aside "Open localhost:3000 and run a smoke test"
+aside --session &lt;session-id&gt; "Continue"
+aside session resume
+aside update</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 계정이 여럿일 때</span><button class="copy">복사</button></div>
+          <pre><code>aside account list
+aside account status
+aside account use u1
+aside --account u1 "Summarize the current page"
+aside exec --account u1 -m openai-codex/gpt-5.5 "Plan this workflow"</code></pre>
+        </div>
+        <p class="body">고른 계정이 로그아웃 상태면 CLI가 경고를 띄워요. 내 API 키(OpenAI·Anthropic)는 계속 쓸 수 있지만, Aside 기본 모델은 다시 로그인해야 해요(<code style="font-size:12.5px">Settings › Account</code>).</p>
+
+        <h3>MCP 서버로 연결</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> mcp.json</span><button class="copy">복사</button></div>
+          <pre><code>{
+  "mcpServers": {
+    "aside": {
+      "command": "aside",
+      "args": ["mcp"]
+    }
+  }
+}</code></pre>
+        </div>
+        <p class="body">Developers 설정이 CLI의 실제 경로를 찾아 줬다면 <code style="font-size:12.5px">command</code>에 그 경로를 넣어요.</p>
+
+        <h3>REPL과 스킬</h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> REPL · 스킬 설치</span><button class="copy">복사</button></div>
+          <pre><code>aside repl "const p = await openTab('https://example.com')"
+aside skills install
+aside skills list
+aside skills show
+aside runtime install</code></pre>
+        </div>
+        <p class="body"><code style="font-size:12.5px">aside skills install</code>은 Codex, Claude Code, Cursor, OpenCode에 aside-browser 스킬을 설치해요.</p>
+
+        <h3>개발자 활용 예 (공식 블로그 사례를 바탕으로)</h3>
+        <div class="tips">
+          <div class="tipcard"><span class="te">🧪</span><h4>실패한 CI 분류</h4><p>실패한 실행에서 첫 실패 단계를 찾고, 마지막 성공 실행과 비교해 로그 링크를 붙인 PR 댓글 초안을 만들어요.</p></div>
+          <div class="tipcard"><span class="te">📦</span><h4>PR 증거 묶음</h4><p>이슈·PR·검사 상태·미리보기 배포·에러 모니터링·스테이징을 열어 스크린샷과 위험 요소를 모아요.</p></div>
+          <div class="tipcard"><span class="te">📱</span><h4>스테이징 QA 캡처</h4><p>데스크톱·모바일 폭으로 화면을 돌며 스크린샷을 저장하고 짧은 QA 체크리스트를 써요.</p></div>
+          <div class="tipcard"><span class="te">🚩</span><h4>기능 플래그 감시</h4><p>출시 문서의 계획값과 대시보드 현재값을 비교하고, 바꾸기 전에 멈춰요.</p></div>
+        </div>
+        <div class="note warn"><span class="ic">⚠️</span><div><b>역할을 나눠요</b><p>공식 블로그의 권장 경계는 “편집기 밖의 일(CI, 대시보드, 스크린샷)은 Aside, 코드 수정은 코딩 에이전트”예요. 운영 환경 설정 변경은 사람 검토를 거치게 하세요.</p></div></div>
+      </section>
+
+      <!-- ===== 15 ===== -->
+      <section id="s15">
+        <div class="sec-head">
+          <div class="sec-num">15</div>
+          <div><h2>요금제와 크레딧</h2><p>무료로 시작하고, 조사·자동화가 늘면 Pro를 고려해요.</p></div>
+        </div>
+
+        <table class="compare">
+          <thead><tr><th>요금제</th><th>가격</th><th>포함 내용</th></tr></thead>
+          <tbody>
+            <tr><th>Free</th><td><b>$0</b></td><td>월 500 크레딧 · 켜 둔 루틴 3개 · 내 AI 구독 연결 · 비밀번호 보관함 · 개인화 메모리</td></tr>
+            <tr><th>Pro</th><td><b>월 $20</b></td><td>Free 전부 + 무료의 3배 사용량 · Ultrabrowse · 루틴 무제한 · Channels 원격 지시 · Cloud handoff · 우선 모델 접근(가능한 경우)</td></tr>
+            <tr><th>Max</th><td><b>월 $200</b></td><td>Pro 전부 + 무료의 40배 사용량 · 얼리 액세스 프로그램</td></tr>
+            <tr><th>Enterprise</th><td>별도 문의</td><td>팀용 · 좌석 관리 · 공유 프로필 · 팀 로그인 관리</td></tr>
+          </tbody>
+        </table>
+        <p class="body">Pro·Max는 연간 결제 시 20% 할인이에요(aside.com/pricing, 9월 14일 확인).</p>
+
+        <h3>크레딧 알아보기</h3>
+        <ul class="body">
+          <li><strong>갱신</strong> — 유료 요금제는 구독을 시작한 날짜를 기준으로 매 결제 주기마다 채워져요. 무료는 매달 1일 0시(UTC), 한국 시간으로 매달 1일 오전 9시에 채워져요. 체험 기간과 첫 유료 기간은 크레딧을 따로 받아요.</li>
+          <li><strong>확인</strong> — <code style="font-size:12.5px">Settings › Plan &amp; Usage › Credits</code>에서 남은 비율, 갱신일, 요금제 월 크레딧을 봐요. 남은 크레딧이 20% 아래로 떨어지면 주소창·입력창에 경고가 떠요.</li>
+          <li><strong>내역</strong> — <code style="font-size:12.5px">Aside credits usage</code>에서 날짜·작업·모델·크레딧을 행으로 보고, 월을 골라 <code style="font-size:12.5px">Download CSV</code>로 내려받아요.</li>
+          <li><strong>다 썼을 때</strong> — 크레딧이 떨어진 작업 화면에서 추가 크레딧을 사거나 요금제를 바꿀 수 있어요.</li>
+          <li><strong>결제 관리</strong> — <code style="font-size:12.5px">Adjust plan</code>으로 요금제 변경, <code style="font-size:12.5px">Open</code>으로 Stripe에서 결제 수단·영수증 관리. 기간 끝 해지를 걸면 해지 날짜가 표시돼요.</li>
+        </ul>
+        <div class="note info"><span class="ic">ℹ️</span><div><b>공식 자료끼리 숫자가 달라요</b><p>Max 사용량이 요금 페이지에는 무료의 <strong>40배</strong>, 도움말 문서에는 <strong>30배</strong>로 적혀 있어요(9월 14일 확인). 이 가이드는 요금 페이지를 따랐어요. 결제 전 요금 페이지를 한 번 더 확인하세요.</p></div></div>
+        <div class="note tip"><span class="ic">💡</span><div><b>크레딧 아끼는 법</b><p>이미 ChatGPT·Claude 구독이 있으면 연결해서 쓰고(<a class="link" href="#s9">9장</a>), 한 페이지짜리 질문에는 Ultrabrowse 대신 일반 작업을 써요. 오래된 긴 대화는 <code>/compact</code>나 새 대화로 정리해요.</p></div></div>
+      </section>
+
+      <!-- ===== 16 ===== -->
+      <section id="s16">
+        <div class="sec-head">
+          <div class="sec-num">16</div>
+          <div><h2>직무별 활용 사례</h2><p>공식 블로그의 직무별 사례를 요지만 우리말로 정리하고, 바로 쓸 지시문을 붙였어요.</p></div>
+        </div>
+
+        <h3>공통 원칙</h3>
+        <ol class="body">
+          <li><strong>근거를 남기게 해요</strong> — 모든 결과에 출처 링크와 스크린샷을 붙이라고 적어요.</li>
+          <li><strong>마지막 버튼은 사람이</strong> — 승인·보내기·결제·약관 동의·저장은 사람이 확인한 뒤에 해요.</li>
+          <li><strong>애매하면 표시하게 해요</strong> — “확인 필요”, “변경”, “없음”처럼 상태를 나눠 적게 해요.</li>
+          <li><strong>세 번 반복되면 루틴으로</strong> — 파일 이름 규칙, 담당자, 사이트 특이사항을 루틴에 담아 다음 실행과 비교해요.</li>
+        </ol>
+
+        <h3>운영·행정</h3>
+        <ul class="body">
+          <li><strong>월요일 보고 묶음</strong> — 대시보드 여러 개를 열어 지난주와 비교하고 예외만 뽑아요.</li>
+          <li><strong>갱신 계약 확인</strong> — 업체 관리 페이지에서 사용 인원과 갱신일을 적고 30일 안에 오는 건을 표시해요.</li>
+          <li><strong>월말 청구서 수집</strong> — 포털마다 PDF를 받아 이름 규칙대로 저장하고, 못 받은 곳을 적어요.</li>
+          <li><strong>중복 도구 찾기</strong> — 도구 목록과 관리 콘솔을 대조해 겹치는 구독을 증거와 함께 모아요.</li>
+        </ul>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 운영 · 갱신 확인</span><button class="copy">복사</button></div>
+          <pre><code>우리가 쓰는 주요 구독 서비스 다섯 곳의 관리자 페이지에 들어가서 현재 사용 인원과 다음 갱신일을 스프레드시트에 적어 줘. 30일 안에 갱신되는 곳은 표시하고, 각 값에 확인한 페이지 링크를 붙여. 결제나 요금제 변경은 하지 마.</code></pre>
+        </div>
+
+        <h3>연구·조사</h3>
+        <ul class="body">
+          <li><strong>변화 추적</strong> — 지난달 보고서의 주장과 지금 웹페이지를 비교해 “변경·없음·검토 필요”로 나눠요.</li>
+          <li><strong>PDF 자료 추출</strong> — 데이터베이스에서 논문을 받아 파일 이름을 정리하고 필요한 항목을 뽑아요. 애매한 값은 표시해요.</li>
+          <li><strong>가격 페이지 스냅숏</strong> — 여러 업체의 요금제 이름·한도·주소를 스크린샷과 함께 남겨요.</li>
+          <li><strong>방문 기록 되찾기</strong> — 지난달 열었던 자료를 방문 기록에서 찾아 다시 열고 관련성을 설명하게 해요.</li>
+        </ul>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 연구 · 기존 보고서 검증</span><button class="copy">복사</button></div>
+          <pre><code>첨부한 보고서에 나오는 출처 링크를 하나씩 열어 지금 화면을 스크린샷으로 남기고, 보고서 속 주장과 비교해 줘. 결과는 링크 · 보고서 주장 · 현재 내용 · 상태(유지/변경/없음) 열의 표로 만들고, 변경·없음에는 근거를 붙여.</code></pre>
+        </div>
+
+        <h3>영업·대외 협력</h3>
+        <ul class="body">
+          <li><strong>미팅 전 준비</strong> — 상대 회사의 채용·보안·최근 변경 페이지와 비슷한 사례를 모아 질문 목록과 위험 요소를 만들어요.</li>
+          <li><strong>연락처 정리</strong> — 웹사이트를 확인해 회사 규모·업종 수정안을 “바꾸기 전/후 + 출처”로 제안하되 저장은 하지 않아요.</li>
+          <li><strong>통화 후 후속 메일</strong> — 캘린더·기록을 보고 인용과 다음 단계를 넣은 초안까지만 써요.</li>
+          <li><strong>명단 만들기</strong> — 협회 디렉터리를 돌며 필요한 항목을 뽑아 CSV로 내보내고 빠진 칸을 표시해요.</li>
+        </ul>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 영업 · 미팅 준비</span><button class="copy">복사</button></div>
+          <pre><code>오후 2시 미팅 전에 상대 회사의 채용 공고, 보안 인증 페이지, 최근 바뀐 소식을 열어 보고 물어볼 질문 5개와 주의할 점을 정리해 줘. 모든 항목에 출처 링크를 붙이고, 확인이 안 된 내용은 따로 표시해.</code></pre>
+        </div>
+
+        <h3>학교 업무 응용 <span style="font-size:13px;color:var(--ink-soft);font-weight:600">(공식 문서 아님)</span></h3>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 응용 · 공문 마감 모아 보기</span><button class="copy">복사</button></div>
+          <pre><code>내가 열어 둔 공문 안내 탭들에서 제목, 담당 부서, 제출 마감일, 제출 방법만 뽑아 마감일 순서로 표를 만들어 줘. 7일 안에 마감되는 건은 표시하고, 제출이나 회신 버튼은 누르지 마.</code></pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 응용 · 수업 자료 링크 모음</span><button class="copy">복사</button></div>
+          <pre><code>다음 주 과학 수업 주제 ‘광합성’에 쓸 만한 무료 공개 자료를 찾아 줘. 최근 5년 안에 만들어진 것만 골라 자료 이름, 만든 곳, 대상 학년, 형식(영상/활동지/시뮬레이션), 링크를 표로 정리하고 참고한 페이지를 인용해. 회원가입이나 결제가 필요한 곳은 제외해.</code></pre>
+        </div>
+      </section>
+
+      <!-- ===== 17 ===== -->
+      <section id="s17">
+        <div class="sec-head">
+          <div class="sec-num">17</div>
+          <div><h2>문제 해결</h2><p>막혔을 때 먼저 볼 곳과 제보하는 법이에요.</p></div>
+        </div>
+
+        <table class="compare">
+          <thead><tr><th>증상</th><th>해 볼 것</th></tr></thead>
+          <tbody>
+            <tr><th>작업이 멈췄다</th><td>작업을 열어 승인·질문 요청을 처리하고 재개해요. 알림을 기다리는 중일 수도 있어요(<a class="link" href="#s7">7장</a>)</td></tr>
+            <tr><th>엉뚱하게 간다</th><td>Steer로 바로 지시해요. 예) “청구 페이지 말고 인보이스 페이지를 써. 이메일은 보내지 마.”</td></tr>
+            <tr><th>자동 입력 안 뜸</th><td><b>Settings › Passwords</b>에서 ① Use default password manager ② Enable Autofill ③ 시크릿 창 여부 ④ Excluded domains ⑤ http 사이트 허용을 차례로 확인. 여러 단계 로그인은 첫 칸을 채운 뒤 다음 안내를 기다려요</td></tr>
+            <tr><th>가져오기 실패</th><td>원래 프로필이 있는지 → 원래 브라우저 닫기 → 파일 가져오기 방식 → 다시 시도</td></tr>
+            <tr><th>영상 재생 안 됨</th><td>넷플릭스·유튜브·프라임 비디오가 “지원하지 않는 브라우저”라고 할 때 아래 순서대로</td></tr>
+            <tr><th>구독 연결이 풀림</th><td>모델에 Reconnect·Reauthenticate가 보이면 눌러 다시 로그인해요</td></tr>
+          </tbody>
+        </table>
+
+        <h3>영상 재생 오류 고치기</h3>
+        <div class="steps">
+          <div class="step"><h4>구성 요소 페이지 열기</h4><p>주소창에 <code>aside://components</code>를 입력해요.</p></div>
+          <div class="step"><h4>Widevine 찾기</h4><p><code>Widevine Content Decryption Module</code> 항목을 찾아요.</p></div>
+          <div class="step"><h4>업데이트 확인</h4><p><code>Check for update</code>를 누르고 상태가 <code>Up-to-date</code>가 될 때까지 기다려요.</p></div>
+          <div class="step"><h4>새로고침</h4><p>영상 탭을 새로고침해요.</p></div>
+        </div>
+
+        <h3>비밀번호 관리자 확장이 안 될 때</h3>
+        <p class="body"><strong>Apple Passwords</strong>(맥)는 Aside 입력창에 아래 문장을 넣어 연결을 점검한 뒤 확장을 다시 열어요.</p>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> Apple Passwords 점검 (공식 문장)</span><button class="copy">복사</button></div>
+          <pre><code>Use the Apple Passwords skill and check whether Apple Passwords is connected properly.</code></pre>
+        </div>
+        <p class="body"><strong>1Password</strong>(맥)는 1Password 앱의 <code style="font-size:12.5px">Settings › Browser › Connect to additional browsers › Add browser</code>에서 Aside를 고른 뒤, 크롬용 연결 파일을 Aside 폴더로 직접 복사해요. 1Password가 Aside를 크롬 계열로 알아보지 못해서 필요한 과정이에요.</p>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 1Password 연결 파일 복사 (맥 터미널)</span><button class="copy">복사</button></div>
+          <pre><code>mkdir -p ~/Library/Application\ Support/Aside/NativeMessagingHosts
+cp ~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/com.1password.1password.json ~/Library/Application\ Support/Aside/NativeMessagingHosts/com.1password.1password.json</code></pre>
+        </div>
+
+        <h3>버그 제보하기</h3>
+        <p class="body">메일은 <a class="link" href="mailto:support@aside.com">support@aside.com</a>, 앱에서는 <code style="font-size:12.5px">Settings › Send feedback</code> 또는 작업 상세의 더보기 메뉴 › <code style="font-size:12.5px">Send feedback</code>(작업 기록과 진단 정보 첨부 가능)이에요.</p>
+        <div class="code">
+          <div class="code-top"><span class="label"><span class="dots"><i></i><i></i><i></i></span> 제보 양식</span><button class="copy">복사</button></div>
+          <pre><code>- 작업 주소 또는 작업 ID:
+- 대략적인 시각:
+- 관련 사이트·앱:
+- 기대한 결과:
+- 실제 결과:
+- 스크린샷 또는 결과 파일 경로:
+- 화면에 뜬 오류 문구:</code></pre>
+        </div>
+      </section>
+
+      <!-- ===== 부록 ===== -->
+      <section id="extra">
+        <div class="sec-head">
+          <div class="sec-num">＋</div>
+          <div><h2>용어 풀이·출처</h2><p>낯선 말 풀이와 이 가이드가 참고한 공식 자료예요.</p></div>
+        </div>
+
+        <h3>용어 풀이</h3>
+        <ul class="body">
+          <li><strong>에이전트</strong> — 목표를 받으면 여러 단계를 스스로 이어서 실행하는 AI.</li>
+          <li><strong>작업(Task)</strong> — AI에게 맡긴 일 한 건. 대화 기록·만든 파일·권한 설정이 함께 묶여요.</li>
+          <li><strong>Agent Tabs</strong> — AI가 일하며 연 탭을 모아 두는 묶음.</li>
+          <li><strong>Steer / Queue</strong> — 진행 중에 보낸 메시지를 바로 반영할지(Steer), 끝나고 반영할지(Queue).</li>
+          <li><strong>루틴(Routine)</strong> — 일정이나 이벤트에 맞춰 자동으로 도는 작업.</li>
+          <li><strong>Ultrabrowse</strong> — 출처가 많이 필요한 조사용 고급 모드(Pro 이상).</li>
+          <li><strong>크레딧</strong> — Aside 제공 모델을 쓸 때 차감되는 사용량 단위.</li>
+          <li><strong>Vault</strong> — Aside의 비밀번호 보관함. AI에게 비밀번호를 보여 주지 않고 자동 입력만 해요.</li>
+          <li><strong>샌드박스</strong> — 명령이 컴퓨터의 다른 부분을 건드리지 못하게 가두는 격리 공간.</li>
+          <li><strong>MCP</strong> — AI에 외부 도구를 연결하는 표준 방식(Model Context Protocol).</li>
+          <li><strong>OAuth</strong> — 비밀번호를 넘기지 않고 팝업 로그인으로 다른 서비스 연결을 허락하는 방식.</li>
+        </ul>
+
+        <h3>참고한 자료</h3>
+        <ul class="body">
+          <li><a class="link" href="https://docs.aside.com/help/get-started" target="_blank" rel="noopener">Aside 도움말 센터</a> — 시작하기·작업·사이드 패널·브라우저 기본기·루틴·Ultrabrowse·AI 설정·메모리·비밀번호·개인정보·권한·개발자·요금·문제 해결</li>
+          <li><a class="link" href="https://docs.aside.com/changelog/components" target="_blank" rel="noopener">변경 기록(Components)</a> · <a class="link" href="https://docs.aside.com/changelog/native" target="_blank" rel="noopener">변경 기록(Aside Browser)</a></li>
+          <li><a class="link" href="https://aside.com/pricing" target="_blank" rel="noopener">요금 페이지</a> · <a class="link" href="https://aside.com/features/memory" target="_blank" rel="noopener">메모리 소개</a> · <a class="link" href="https://aside.com/features/password-manager" target="_blank" rel="noopener">Vault 소개</a></li>
+          <li>공식 블로그 직무별 사례 — <a class="link" href="https://aside.com/blog/operations" target="_blank" rel="noopener">운영</a> · <a class="link" href="https://aside.com/blog/researchers" target="_blank" rel="noopener">연구</a> · <a class="link" href="https://aside.com/blog/sales" target="_blank" rel="noopener">영업</a> · <a class="link" href="https://aside.com/blog/developers" target="_blank" rel="noopener">개발</a></li>
+          <li><a class="link" href="https://piunikaweb.com/2026/09/14/aside-ai-browser-windows-release/" target="_blank" rel="noopener">PiunikaWeb 윈도우 출시 기사</a> (9월 14일)</li>
+        </ul>
+
+        <div class="note info"><span class="ic">ℹ️</span><div><b>이 가이드에 대해</b><p>Aside의 공식 자료가 아니라, 2026년 9월 14일에 열람한 공식 문서를 우리말로 옮겨 정리한 것이에요. Aside는 업데이트가 잦아서 메뉴 위치나 기능이 바뀔 수 있어요. “응용 예시”라고 표시한 지시문은 공식 문서에 없는 예시예요.</p></div></div>
+      </section>
+
+    </div><!-- /.inner -->
+
+    <footer>
+      <p><b>Aside 사용법 완전 가이드</b> · 공식 도움말 문서 기준 · 2026년 9월 14일</p>
+      <p style="margin-top:6px;font-size:12.5px">Aside의 공식 자료가 아닌 개인 정리본이에요 · <a href="https://docs.aside.com" target="_blank" rel="noopener">docs.aside.com</a></p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // 진행 막대
+  const prog=document.getElementById('prog');
+  addEventListener('scroll',()=>{const h=document.documentElement;const max=h.scrollHeight-h.clientHeight;
+    prog.style.width=(max>0?(h.scrollTop/max*100):0)+'%';},{passive:true});
+
+  // 현재 섹션 목차 하이라이트
+  const links=[...document.querySelectorAll('#toc a')];
+  const map={}; links.forEach(a=>map[a.getAttribute('href').slice(1)]=a);
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){
+    links.forEach(l=>l.classList.remove('active'));
+    if(map[e.target.id])map[e.target.id].classList.add('active');}});},{rootMargin:'-25% 0px -65% 0px'});
+  document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
+
+  // 토스트 + 복사 버튼
+  const toastEl=document.getElementById('toast'); let tT;
+  function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>toastEl.classList.remove('show'),1600);}
+  document.querySelectorAll('.code').forEach(box=>{
+    const btn=box.querySelector('.copy'); if(!btn)return;
+    const text=box.querySelector('pre').innerText;
+    btn.addEventListener('click',()=>{navigator.clipboard.writeText(text).then(()=>{
+      btn.textContent='복사됨!';btn.classList.add('done');toast('클립보드에 복사했어요 ✨');
+      setTimeout(()=>{btn.textContent='복사';btn.classList.remove('done');},1500);
+    }).catch(()=>toast('복사 실패 — 직접 선택해 주세요'));});
+  });
+
+  // 모바일 목차 클릭 시 닫기
+  document.querySelectorAll('.m-toc a').forEach(a=>a.addEventListener('click',()=>{
+    const d=document.querySelector('.m-toc'); if(d)d.open=false;}));
+</script>
+</body>
+</html>
